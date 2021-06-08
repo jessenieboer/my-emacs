@@ -1,0 +1,649 @@
+* readme
+** what
+my emacs config
+** why
+** for who
+** by who
+me
+*** acknowledgments
+- xah
+- https://llazarek.com/2018/07/modal-editing-in-emacs.html
+- abo
+- https://masteringemacs.net/
+- https://pages.sachachua.com/.emacs.d/Sacha.html
+** install
+install org-dotemacs package on emacs, then clone this repo to the user-emacs-directory
+* personal info
+#+begin_src emacs-lisp
+(setq user-full-name "Jesse Nieboer"
+      user-mail-address "jessenieboer@protonmail.com")
+#+end_src
+* use-package
+#+begin_src emacs-lisp
+(package-initialize)
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package)
+  (eval-when-compile (require 'use-package)))
+(setq use-package-always-ensure t)
+#+end_src
+* sources and destinations
+#+begin_src emacs-lisp
+(setq default-directory "~/")
+#+end_src
+** load path
+** package sources
+#+begin_src emacs-lisp
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+#+end_src
+** secrets
+** writing emacs stuff to disk
+#+begin_src emacs-lisp
+(setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
+      backup-by-copying t    ; Don't delink hardlinks
+      version-control t      ; Use version numbers on backups
+      delete-old-versions t  ; Automatically delete excess backups
+      kept-new-versions 20   ; how many of the newest versions to keep
+      kept-old-versions 5    ; and how many of the old
+      )
+(setq custom-file (make-temp-file "emacs-custom")) ; disable emacs customizing this file
+#+end_src
+* display preferences
+** ui
+#+begin_src emacs-lisp
+(scroll-bar-mode -1)
+(menu-bar-mode -1) 
+(tool-bar-mode -1)
+(show-paren-mode 1)
+(setq-default fit-window-to-buffer-horizontally t)
+(add-to-list 'default-frame-alist '(font . "-outline-Source Code Variable-normal-normal-normal-mono-*-*-*-*-c-*-iso8859-7"))
+
+;; (use-package ivy-posframe
+;;   :config 
+;;   (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display))))
+;; (ivy-posframe-mode nil)
+  
+(use-package spaceline :ensure t
+  :config
+  (setq-default mode-line-format '("%e" (:eval (spaceline-ml-main))))
+  (spaceline-define-segment my/hydra
+    "show if hydra"
+    (if hydra-curr-map
+	   (concat "")
+	   (concat "literal"))))
+
+;; todo buffer size display
+(use-package spaceline-config :ensure spaceline
+  :config
+  ;;(spaceline-helm-mode 1)
+  (spaceline-install
+    'main
+    '((my/hydra)
+      (buffer-modified buffer-id)
+      (process :when active))
+    '((selection-info :face 'region :when mark-active)
+      (version-control :when active)
+      (line-column)
+      (global :when active)
+      (major-mode))))
+
+(setq-default
+ powerline-height 24
+ powerline-default-separator 'wave
+ spaceline-separator-dir-left '(right . right)
+ spaceline-separator-dir-right '(left . left))
+
+
+;; (use-package simple-modeline
+;;   :hook (after-init . simple-modeline-mode)
+;;   :config
+;;   (setq simple-modeline-segments '((simple-modeline-segment-modified simple-modeline-segment-buffer-name simple-modeline-segment-position)				   (simple-modeline-segment-minor-modes simple-modeline-segment-input-method simple-modeline-segment-vc simple-modeline-segment-misc-info simple-modeline-segment-process simple-modeline-segment-major-mode))))
+#+end_src
+** theme
+#+begin_src emacs-lisp
+(global-visual-line-mode 1)
+(use-package base16-theme
+  :config  
+  ;; dark
+  (load-theme 'base16-tomorrow-night t t)
+  (load-theme 'base16-tomorrow-night-eighties t t)
+  (load-theme 'base16-gruvbox-dark-hard t t)
+  (load-theme 'base16-gruvbox-dark-medium t t)
+  (load-theme 'base16-gruvbox-dark-soft t t)
+  (load-theme 'base16-gruvbox-dark-pale t t)
+  (load-theme 'base16-monokai t t)
+  (load-theme 'base16-solarized-dark t t)
+  ;; light 
+  (load-theme 'base16-tomorrow t t)
+  (load-theme 'base16-gruvbox-light-hard t t) 
+  (load-theme 'base16-gruvbox-light-medium t t)
+  (load-theme 'base16-gruvbox-light-soft t t)  
+  (load-theme 'base16-solarized-light t t)
+  ;; very dark, high contrast
+  (load-theme 'base16-3024 t t) 
+  (load-theme 'base16-bright t t) 
+  (load-theme 'base16-isotope t t)
+  (load-theme 'base16-synth-midnight-dark t t)
+  ;; current default
+  (enable-theme 'base16-solarized-dark))
+#+end_src 
+* file system
+** dired
+#+begin_src emacs-lisp
+(add-hook 'dired-mode-hook(lambda ()(dired-hide-details-mode 1))) ; reduce dired clutter by default
+(setq dired-copy-preserve-time t
+      dired-recursive-deletes 'top
+      dired-dwim-target t)
+;; (use-package dired-collapse)
+;; (dired-collapse-mode t)
+;(use-package dired-filter)
+;(use-package dired-narrow)
+(use-package dired-ranger)
+(use-package dired-subtree)
+(use-package dired-single)
+#+end_src
+* buffer management
+#+begin_src emacs-lisp
+(setq clean-buffer-list-kill-never-buffer-names '())
+(desktop-save-mode 1)
+#+end_src
+* completion
+** ivy
+#+begin_src emacs-lisp
+(use-package ivy
+  :config
+  (setq ivy-use-virtual-buffers nil
+	ivy-count-format "(%d/%d) "		  
+	ivy-re-builders-alist
+	'((t . ivy--regex-ignore-order))) ; if I want different default search
+  (ivy-mode t))
+#+end_src
+** prescient
+#+begin_src emacs-lisp
+(use-package prescient)
+(use-package ivy-prescient
+  :config
+  (ivy-prescient-mode t))
+#+end_src
+** counsel
+#+begin_src emacs-lisp
+(use-package counsel
+  :bind 
+  (("M-x" . counsel-M-x))
+  :config
+  (setq ivy-initial-inputs-alist nil)) ; prevent counsel from inserting initial characters
+#+end_src
+* point movement
+#+begin_src emacs-lisp
+(use-package swiper)
+(use-package avy ; use only if search is slow
+  :config
+  (setq avy-all-windows nil
+	avy-keys '(?l ?a ?r ?t ?s ?e ?i ?n ?c) ; set home row
+	avy-timeout-seconds 60))
+#+end_src
+* org-mode
+  #+begin_src emacs-lisp
+    (use-package org
+      :config
+      (setq org-indent-mode t))
+
+    (use-package org-dotemacs)
+    (setq org-src-fontify-natively t
+	  org-src-tab-acts-natively t
+	  org-confirm-babel-evaluate nil
+	  org-edit-src-content-indentation 0)
+
+    (use-package doct
+      :ensure t
+      :commands (doct))
+  #+end_src
+** capture templates
+#+begin_src emacs-lisp
+(setq org-capture-templates
+      (doct '(("-> foundation" :keys "f" :children
+	       (("dreams" :keys "d" :type plain
+		 :datetree t
+		 :file "~/foundation/dreams.org"
+		 :template ("%?"))
+		("journal" :keys "o" :type plain
+		 :datetree t
+		 :file "~/foundation/journal.org"
+		 :template ("%?"))
+		("meditations" :keys "m" :type plain
+		 :datetree t
+		 :file "~/foundation/meditations.org"
+		 :template ("%?"))
+		("silence" :keys "s" :type plain
+		 :datetree t
+		 :file "~/foundation/silence.org"
+		 :template ("%?"))))
+	      ("-> internal" :keys "i" :children
+	       (("-> production" :keys "p" :children
+		 (("kf journal" :keys "f" :type plain
+		   :datetree t
+		   :file "~/internal/production/knowledge-fundamentals/journal.org"
+		   :template ("%?"))
+		  ("kms journal" :keys "k" :type plain
+		   :datetree t
+		   :file "~/internal/production/kingdom-management-system/journal.org"
+		   :template ("%?"))
+		  ("software prod journal" :keys "s" :type plain
+		   :datetree t
+		   :file "~/internal/production/software-production/journal.org"
+		   :template ("%?")))))))))
+#+end_src
+* git
+#+begin_src emacs-lisp
+(use-package magit
+  :config
+  (cond
+   ((string-equal system-type "windows-nt")
+    (progn
+      (setq magit-git-executable "C:/linux-structure/usr/Git/bin/git.exe")))
+   ((string-equal system-type "gnu/linux")
+    (progn
+      (setq magit-git-executable "C:/linux-structure/usr/Git/bin/git.exe")))))
+
+(use-package ssh-agency)
+#+end_src
+* haskell
+#+begin_src emacs-lisp
+(use-package haskell-mode)
+#+end_src  
+* bindings
+#+begin_src emacs-lisp
+(use-package move-text)
+#+end_src
+** functions
+#+begin_src emacs-lisp
+;; unused
+(defun other-win-rehydra ()
+  (interactive)
+  (progn
+					;(major-mode-hydra)
+    (major-mode-hydra-dispatch (buffer-local-value 'major-mode (window-buffer (other-window 1))))))
+;; unused
+(defun other-frame-rehydra ()
+  (interactive)
+  (other-frame 1)
+  (major-mode-hydra-dispatch (buffer-local-value 'major-mode 
+						 (window-buffer (next-window)))))
+
+(defun agenda-show-narrow ()
+  (interactive)
+  (progn
+    (org-agenda-goto)
+    (org-narrow-to-subtree)
+    (other-window 1)))
+
+;; (defun toggle-hydra-with-modeline ()
+;;   "turn hydra on or off and update mode line"
+;;   (interactive)
+;;   (if hydra-curr-map
+;;       (hydra-disable)
+;;     (major-mode-hydra))
+;;   (force-mode-line-update))
+
+;; https://stackoverflow.com/questions/5536304/emacs-stock-major-modes-list
+(defun match-major-modes (m)
+  "Returns list of potential major mode names (without the final -mode).
+Note, that this is guess work."
+  (interactive)
+  (let (l)
+    (mapatoms #'(lambda (f) (and
+                 (commandp f)
+                 (string-match m (symbol-name f))
+                 ;; auto-loaded
+                 (or (and (autoloadp (symbol-function f))
+                      (let ((doc (documentation f)))
+                    (when doc
+                      (and
+                       (let ((docSplit (help-split-fundoc doc f)))
+                         (and docSplit ;; car is argument list
+                          (null (cdr (read (car docSplit)))))) ;; major mode starters have no arguments
+                       (if (string-match "[mM]inor" doc) ;; If the doc contains "minor"...
+                           (string-match "[mM]ajor" doc) ;; it should also contain "major".
+                         t) ;; else we cannot decide therefrom
+                       ))))
+                 (null (help-function-arglist f)))
+                 (setq l (cons f l)))))
+    (princ l)))
+(match-major-modes "^magit-.*-mode")
+#+end_src
+** hydras
+- keyboard states
+  - data/literal
+  - command
+- guidelines
+  - frequent, repetitive commands: single keys
+  - infrequent, repetitive commands: modified singles
+  - frequent, non-repetitive commands: short sequence?
+  - infrequent, non-repetitive commands: long sequence?
+#+begin_src emacs-lisp
+(use-package major-mode-hydra
+  :ensure t
+  :bind
+  ("<f18>" . major-mode-hydra))
+  (setq hydra-is-helpful nil)
+#+end_src
+*** calendar
+#+begin_src emacs-lisp
+(major-mode-hydra-define (calendar-mode)
+  (:color amaranth :quit-key ("<f19>") :title "calendar")
+  ("calendar nav"
+   (("t" calendar-backward-day "p day")
+    ("s" calendar-forward-day "n day")
+    ("SPC" calendar-backward-week "p week")
+    ("e" calendar-forward-week "n week")
+    ("a" calendar-backward-month "p month")
+    ("n" calendar-forward-month "n month")
+    ("l" calendar-backward-year "p year")
+    ("c" calendar-forward-year "n year"))
+  "calendar action"
+  (("RET" agenda-show-narrow "show thought")
+   ("*" org-agenda-goto "goto thought"))))
+#+end_src
+*** dired
+#+begin_src emacs-lisp
+(major-mode-hydra-define+ (dired-mode)
+  (:color amaranth :quit-key ("<f19>") :title "dired")
+  (
+   "dired nav"
+   (("SPC" dired-previous-line "p line")
+    ("(" dired-prev-dirline "p dir")
+    ("e" dired-next-line "n line")
+    (")" dired-next-dirline "n dir")
+    ("a" dired-single-up-directory "climb single")
+    ("=" dired-up-directory "climb")
+    ("n" dired-single-buffer  "vis single")
+    (";" dired-find-file "vis")
+    ("p" dired-find-file-other-window  "vis other")
+    ("]" dired-display-file "show other")
+    ("r" dired-goto-file "goto"))
+
+   "dired view"
+   (("t" dired-subtree-remove "hide sub")
+    ("s" dired-subtree-insert "show sub")
+    ("u" dired-hide-details-mode "toggle details"))
+  
+   "dired action"
+   (("RET" dired-mark "dired mark")
+    ("*" dired-unmark "dired unmark")
+    ("o" set-mark-command "mark")
+    ("-" exchange-point-and-mark "mark switch")
+    ("it" dired-ranger-copy "copy")
+    ("i SPC" dired-ranger-move "move")
+    ("ia" dired-ranger-paste "paste")
+    ("id" dired-do-delete "delete")
+    ("il" dired-do-rename "rename")
+    )))
+#+end_src
+*** emacs
+#+begin_src emacs-lisp
+(major-mode-hydra-define (calendar-mode conf-unix-mode conf-windows-mode dired-mode emacs-lisp-mode fundamental-mode help-mode lisp-interaction-mode magit-repolist-mode magit-revision-mode magit-log-mode magit-process-mode magit-stash-mode magit-section-mode magit-diff-mode magit-log-select-mode magit-submodule-list-mode magit-refs-mode magit-stashes-mode magit-merge-preview-mode magit-reflog-mode magit-cherry-mode magit-status-mode org-mode org-agenda-mode package-menu-mode sh-mode text-mode)
+  (:color amaranth :quit-key ("<f19>") :title "emacs")
+  ("emacs nav"
+   (("y" other-window "switch win")
+    ("m" other-frame "switch frame")
+    ("v" previous-buffer "p buffer")
+    ("x" next-buffer "n buffer")
+    ("h SPC" ivy-switch-buffer "go buffer")
+    ("w" ivy-resume "mini resume"))
+
+   "emacs view"
+   (("fn" split-window-right "make win")
+    ("fh" split-window-below "make win down")
+    ("fc" make-frame-command "make frame")
+    ("f;" delete-window "kill win")
+    ("f>" delete-other-windows "kill owin")
+    ("f," delete-frame "kill frame")
+    ("fp" fit-window-to-buffer "fit win")
+    ("f]" balance-windows "balance win")
+    ("fu" maximize-window "max win")
+    ("fb" toggle-frame-fullscreen "full frame")
+    ("fe" (recenter nil) "recenter")
+    ("fi" (recenter 0) "recenter top")
+    ("fo" (recenter -1) "recenter bot")
+    ("<f13>" (setq hydra-is-helpful t) "show hydra")
+    ("<f24>" (setq hydra-is-helpful nil) "hide hydra"))
+
+   "emacs action"
+    (
+    ("hw" revert-buffer "revert buff")
+    ("ha" save-buffer "write buff")
+    ("h=" (save-some-buffers t nil) "write all buff")
+    ("hg" kill-this-buffer "kill buff")
+    ("h[" kill-buffer "kill buff list")
+    ("hd" counsel-M-x "command")
+    ("hf" magit-status "magit")
+    ("h RET" counsel-dired "dired")
+    ("hr" counsel-find-file "find file")
+    ("hl" eval-last-sexp "eval last")
+    ("h$" with-editor-finish "with edit fin")
+    ("j" org-capture "capture")
+    ("htt" describe-function "help function")
+    ("#" org-capture-goto-last-stored "last capture")
+    ("k" keyboard-quit "kb quit")
+    ("@" save-buffers-kill-emacs "kill emacs"))))
+#+end_src
+*** minibuffer
+#+begin_src emacs-lisp
+(major-mode-hydra-define (minibuffer-inactive-mode)
+  (:color amaranth :quit-key ("<f19>") :title "minibuffer")
+  (
+   "text nav"
+   (("t" backward-char "p char")
+    ("s" forward-char  "n char")
+    ("a" backward-word "p word")
+    ("n" forward-word "n word")
+    ("l" move-beginning-of-line "line first")
+    ("c" move-end-of-line "line last"))
+
+   "text action"
+   (("d" delete-backward-char "back")
+    ("<" delete-forward-char "delete")
+    ("it" kill-ring-save "copy")
+    ("i SPC" kill-region "cut")
+    ("ia" yank "paste")
+    ("ig" yank-pop "paste pop")
+    ("id" ivy-insert-current "ivy insert")
+    ("il" undo-fu-only-undo "undo")
+    ("if" undo-fu-only-redo "redo"))
+   
+   "mini nav"
+   (("SPC" ivy-previous-line "p item")
+    ("e" ivy-next-line "n item")
+    ("(" ivy-scroll-up-command "scroll up")
+    (")" ivy-scroll-down-command "scroll down")
+    ("/" ivy-beginning-of-buffer "mini first")
+    ("," ivy-end-of-buffer "mini last")
+    ("." ivy-next-history-element "n hist")
+    ("\"" ivy-previous-history-element "p hist")
+    ("y" other-window "switch win")
+    ("m" other-frame "switch frame"))
+
+   "mini view"
+   (("j" ivy-minibuffer-shrink "mini shrink")
+    ("k" ivy-minibuffer-grow "mini grow")
+    ("<f13>" (setq hydra-is-helpful t) "show hydra")
+    ("<f24>" (setq hydra-is-helpful nil) "hide hydra"))
+
+   "mini action"
+   (("o" ivy-mark "mark")
+    ("-" ivy-unmark "unmark")
+    ("p" minibuffer-keyboard-quit "mini quit")
+    ("RET" ivy-alt-done "mini done/dir")
+    ("*" ivy-dispatching-done "mini choice done")
+    ("r" ivy-partial-or-done "mini partial")
+    ("{" ivy-immediate-done "mini immediate")
+    ("g" ivy-call "mini done open ")
+    ("[" ivy-dispatching-call "mini choice done open "))
+
+   "calendar action"
+   (("C-t" (org-eval-in-calendar '(calendar-backward-day 1)) "p day")
+    ("C-s" (org-eval-in-calendar '(calendar-forward-day 1)) "n day")
+    ("C-SPC" (org-eval-in-calendar '(calendar-backward-week 1)) "p week")
+    ("C-e" (org-eval-in-calendar '(calendar-forward-week 1)) "n week")
+    ("C-a" (org-eval-in-calendar '(calendar-backward-month 1)) "p month")
+    ("C-n" (org-eval-in-calendar '(calendar-forward-month 1)) "n month")
+    ("C-l" (org-eval-in-calendar '(calendar-backward-year 1)) "p year")
+    ("C-c" (org-eval-in-calendar '(calendar-forward-year 1)) "n year"))))
+#+end_src
+*** org
+#+begin_src emacs-lisp
+(major-mode-hydra-define+ (org-mode org-agenda-mode)
+  (:color amaranth :quit-key ("<f19>") :title "org")
+  (    
+   "org view"
+   (("C-t" outline-hide-subtree "hide sub")
+    ("C-\"" (org-set-startup-visibility) "reset view")
+    ("C-n" org-show-entry "show leaf")
+    ("C-;" org-show-subtree "show sub")
+    ("C-s" org-show-children "show limb")
+    ("C-." outline-show-branches "show all limb")
+    ("C-c" org-indent-mode "indent mode"))
+
+   "org nav/action"
+   (("C-SPC" org-previous-visible-heading "p limb")
+    ("C-e" org-next-visible-heading "n limb")
+    ("C-a" org-toggle-heading "or togg head")
+    ("C-r" org-move-subtree-up "or sub up")
+    ("C-i" org-move-subtree-down "or sub down")
+    ("C-g" org-do-promote "or pro")
+    ("C-p" org-do-demote "or de")
+    ("C-[" org-promote-subtree "or pro sub")
+    ("C-]" org-demote-subtree "or de sub")
+    ("<C-return>" org-meta-return "insert")
+    ("C-o" org-mark-subtree "or mark sub")
+    ("C-h" org-cycle "or cyc")
+    ("C->" org-global-cycle "or global cyc")
+    ("C-l" org-time-stamp "or ts")
+    ("C-d" org-capture-finalize "or cap fin")
+    ("C-<" org-capture-kill "or cap can")
+    ("C-f" org-capture-refile "or cap re"))))
+#+end_src
+*** text/code
+#+begin_src emacs-lisp
+(major-mode-hydra-define+ (conf-unix-mode conf-windows-mode emacs-lisp-mode fundamental-mode text-mode org-mode sh-mode)
+  (:color amaranth :quit-key ("<f19>") :title "text/code")
+  (
+   "text nav"
+   (("SPC" previous-line "p line")    
+    ("e" next-line "n line")
+    ("t" backward-char "p char")
+    ("s" forward-char  "n char")
+    ("a" backward-word "p word")
+    ("n" forward-word "n word")
+    ("l" move-beginning-of-line "line first")
+    ("c" move-end-of-line "line last")
+    ("g" backward-sexp "p ball")
+    ("p" forward-sexp "n ball")
+    ("r" swiper "go seek")
+    ("(" backward-paragraph "p chunk")
+    (")" forward-paragraph "n chunk")
+    ("[" beginning-of-buffer "buff first")
+    ("]" end-of-buffer "buff last"))
+ 
+   "text action"
+   (("RET" newline "newline")
+    ("*" indent-for-tab-command "indent")
+    ("d" delete-backward-char "back")
+    ("u" delete-forward-char "delete")
+    ("it" kill-ring-save "copy")
+    ("i SPC" kill-region "cut")
+    ("ia" yank "paste")
+    ("ig" yank-pop "paste pop")
+    ("il" undo-fu-only-undo "undo")
+    ("if" undo-fu-only-redo "redo")
+    ("u" comment-line "comment")
+    ("o" set-mark-command "mark")
+    ("-" exchange-point-and-mark "mark switch")
+    ("\\" move-text-region-up "region up")
+    ("+" move-text-region-down "region down"))))
+#+end_src
+*** agenda
+#+begin_src emacs-lisp
+(major-mode-hydra-define+ (org-agenda-mode)
+  (:color amaranth :quit-key ("<f19>") :title "agenda")
+  ("agenda nav"
+   (("SPC" org-agenda-previous-line "p item")
+    ("e" org-agenda-next-line "n item")
+    ("t" backward-char "p char")
+    ("s" forward-char  "n char")
+    ("(" backward-paragraph "p group")
+    (")" forward-paragraph "n group")
+    ("r" swiper "go seek"))
+   "agenda view"
+   (("\"" origami-close-node "hide group")
+    ("." origami-open-node "show group")
+    ("=" origami-close-all-nodes "hide all")
+    (";" origami-open-all-nodes "show all"))
+  "agenda action"
+   (("a" org-columns-previous-allowed-value "p value")
+    ("n" org-columns-next-allowed-value "n value")
+    ("g" ork-view "change view")
+    ("[" org-agenda-filter-by-category "restrict view")
+    ("p" ork-travel "travel")
+    ("RET" agenda-show-narrow "show thought")
+    ("*" org-agenda-goto "goto thought")
+    ("w" outline-show-all "org show all") 
+    ("]" ork-agenda-refile "refile")
+    ("l" org-agenda-redo-all "refresh")
+    ("\\" org-agenda-kill "delete"))))
+#+end_src
+*** magit
+#+begin_src emacs-lisp
+(major-mode-hydra-define+ (magit-repolist-mode magit-revision-mode magit-log-mode magit-process-mode magit-stash-mode magit-section-mode magit-diff-mode magit-log-select-mode magit-submodule-list-mode magit-refs-mode magit-stashes-mode magit-merge-preview-mode magit-reflog-mode magit-cherry-mode magit-status-mode)
+  (:color amaranth :quit-key ("<f19>") :title "magit")
+  (
+   "magit nav"
+   (("SPC" magit-previous-line "p line")
+    ("(" magit-section-backward "p sect")
+    ("e" magit-next-line "n line")
+    (")" magit-section-forward "n sect")
+    ("ie" magit-log "log" :exit t)
+    ("ip" magit-show-refs "refs" :exit t)
+    ("is" magit-process-buffer "process")
+    ("ic" magit-remote "remote" :exit t))
+
+   "magit view"
+   (("t" magit-section-hide "hide sect")
+    ("s" magit-section-show "show sect")
+    ("ii" magit-refresh "refresh")
+    ("iu" (print magit--default-directory) "show def dir"))
+  
+   "magit action"
+   (("i SPC" magit-stage "stage")
+    ("i(" magit-unstage "unstage")
+    ("i RET" magit-commit "commit" :exit t)
+    ("it" magit-fetch "fetch" :exit t)
+    ("i*" magit-push "push" :exit t)
+    ("ir" magit-checkout "checkout")
+    ("ig" magit-branch "branch" :exit t)
+    ("ia" magit-stash "stash" :exit t)
+    ("il" magit-rebase "rebase" :exit t)
+    ("iw" magit-merge "merge" :exit t)
+    ("id" magit-git-command-topdir "git top dir")
+    ("i<" magit-git-command "git def dir")
+    ("if" magit-reset "reset" :exit t)
+    ("o" set-mark-command "mark")
+    ("-" exchange-point-and-mark "mark switch"))))
+#+end_src
+* startup
+#+begin_src emacs-lisp
+(set-frame-name "main")
+(toggle-frame-fullscreen)
+#+end_src
+* other preferences
+#+begin_src emacs-lisp
+(use-package keyfreq)
+(keyfreq-mode 1)
+(keyfreq-autosave-mode 1)
+(use-package undo-fu)
+(defalias 'yes-or-no-p 'y-or-n-p)
+(setq inhibit-startup-screen t
+      ring-bell-function 'ignore
+      global-auto-revert-mode t
+      w32-recognize-altgr nil) 
+#+end_src
