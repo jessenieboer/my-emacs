@@ -1,0 +1,6 @@
+*
+!.gitignore
+!.gitmessage
+!gitconfig.sh
+!init.el
+!dotemacs.org
