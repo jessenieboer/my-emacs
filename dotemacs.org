@@ -247,6 +247,10 @@ install org-dotemacs package on emacs, then clone this repo to the user-emacs-di
 
 (use-package ssh-agency)
 #+end_src
+* nix
+#+begin_src emacs-lisp
+(use-package nix-mode)
+#+end_src
 * haskell
 #+begin_src emacs-lisp
 (use-package haskell-mode)
@@ -381,7 +385,7 @@ Note, that this is guess work."
 #+end_src
 *** emacs
 #+begin_src emacs-lisp
-(major-mode-hydra-define (calendar-mode conf-unix-mode conf-windows-mode dired-mode emacs-lisp-mode fundamental-mode help-mode lisp-interaction-mode magit-repolist-mode magit-revision-mode magit-log-mode magit-process-mode magit-stash-mode magit-section-mode magit-diff-mode magit-log-select-mode magit-submodule-list-mode magit-refs-mode magit-stashes-mode magit-merge-preview-mode magit-reflog-mode magit-cherry-mode magit-status-mode org-mode org-agenda-mode package-menu-mode sh-mode text-mode)
+(major-mode-hydra-define (calendar-mode conf-unix-mode conf-windows-mode dired-mode emacs-lisp-mode fundamental-mode help-mode lisp-interaction-mode magit-repolist-mode magit-revision-mode magit-log-mode magit-process-mode magit-stash-mode magit-section-mode magit-diff-mode magit-log-select-mode magit-submodule-list-mode magit-refs-mode magit-stashes-mode magit-merge-preview-mode magit-reflog-mode magit-cherry-mode magit-status-mode nix-mode org-mode org-agenda-mode package-menu-mode sh-mode text-mode)
   (:color amaranth :quit-key ("<f19>") :title "emacs")
   ("emacs nav"
    (("y" other-window "switch win")
@@ -525,7 +529,7 @@ Note, that this is guess work."
 #+end_src
 *** text/code
 #+begin_src emacs-lisp
-(major-mode-hydra-define+ (conf-unix-mode conf-windows-mode emacs-lisp-mode fundamental-mode text-mode org-mode sh-mode)
+(major-mode-hydra-define+ (conf-unix-mode conf-windows-mode emacs-lisp-mode fundamental-mode nix-mode text-mode org-mode sh-mode)
   (:color amaranth :quit-key ("<f19>") :title "text/code")
   (
    "text nav"
