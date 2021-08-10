@@ -255,6 +255,11 @@ install org-dotemacs package on emacs, then clone this repo to the user-emacs-di
 #+begin_src emacs-lisp
 (use-package haskell-mode)
 #+end_src  
+* startup
+#+begin_src emacs-lisp
+(set-frame-name "main")
+(toggle-frame-fullscreen)
+#+end_src
 * bindings
 #+begin_src emacs-lisp
 (use-package move-text)
@@ -354,36 +359,36 @@ Note, that this is guess work."
   (:color amaranth :quit-key ("<f19>") :title "dired")
   (
    "dired nav"
-   (("SPC" dired-previous-line "p line")
-    ("(" dired-prev-dirline "p dir")
-    ("e" dired-next-line "n line")
-    (")" dired-next-dirline "n dir")
-    ("a" dired-single-up-directory "climb single")
+   (("SPC" dired-previous-line "deer pree line")
+    ("(" dired-prev-dirline "pree deer")
+    ("e" dired-next-line "deer nex line")
+    (")" dired-next-dirline "nex deer")
+    ("a" dired-single-up-directory "climb one ")
     ("=" dired-up-directory "climb")
-    ("n" dired-single-buffer  "vis single")
-    (";" dired-find-file "vis")
-    ("p" dired-find-file-other-window  "vis other")
+    ("n" dired-single-buffer  "viz one")
+    (";" dired-find-file "viz")
+    ("p" dired-find-file-other-window  "viz other")
     ("]" dired-display-file "show other")
     ("r" dired-goto-file "goto"))
 
    "dired view"
-   (("t" dired-subtree-remove "hide sub")
-    ("s" dired-subtree-insert "show sub")
-    ("u" dired-hide-details-mode "toggle details"))
+   (("t" dired-subtree-remove "deer hide sub")
+    ("s" dired-subtree-insert "deer show sub")
+    ("u" dired-hide-details-mode "deer details"))
   
    "dired action"
-   (("RET" dired-mark "dired mark")
-    ("*" dired-unmark "dired unmark")
+   (("RET" dired-mark "deer mark")
+    ("*" dired-unmark "deer unmark")
     ("o" set-mark-command "mark")
     ("-" exchange-point-and-mark "mark switch")
-    ("it" dired-ranger-copy "copy")
-    ("i SPC" dired-ranger-move "move")
-    ("ia" dired-ranger-paste "paste")
-    ("id" dired-do-delete "delete")
-    ("il" dired-do-rename "rename")
+    ("it" dired-ranger-copy "deer copy")
+    ("i SPC" dired-ranger-move "deer move")
+    ("ia" dired-ranger-paste "deer paste")
+    ("id" dired-do-delete "deer dell")
+    ("il" dired-do-rename "deer rename")
     )))
 #+end_src
-*** emacs
+emacs
 #+begin_src emacs-lisp
 (major-mode-hydra-define (calendar-mode conf-unix-mode conf-windows-mode dired-mode emacs-lisp-mode fundamental-mode help-mode lisp-interaction-mode magit-repolist-mode magit-revision-mode magit-log-mode magit-process-mode magit-stash-mode magit-section-mode magit-diff-mode magit-log-select-mode magit-submodule-list-mode magit-refs-mode magit-stashes-mode magit-merge-preview-mode magit-reflog-mode magit-cherry-mode magit-status-mode nix-mode org-mode org-agenda-mode package-menu-mode sh-mode text-mode)
   (:color amaranth :quit-key ("<f19>") :title "emacs")
@@ -527,45 +532,6 @@ Note, that this is guess work."
     ("C-<" org-capture-kill "or cap can")
     ("C-f" org-capture-refile "or cap ree"))))
 #+end_src
-*** text/code
-#+begin_src emacs-lisp
-(major-mode-hydra-define+ (conf-unix-mode conf-windows-mode emacs-lisp-mode fundamental-mode nix-mode text-mode org-mode sh-mode)
-  (:color amaranth :quit-key ("<f19>") :title "text/code")
-  (
-   "text nav"
-   (("SPC" previous-line "p line")    
-    ("e" next-line "n line")
-    ("t" backward-char "p char")
-    ("s" forward-char  "n char")
-    ("a" backward-word "p word")
-    ("n" forward-word "n word")
-    ("l" move-beginning-of-line "line first")
-    ("c" move-end-of-line "line last")
-    ("g" backward-sexp "p ball")
-    ("p" forward-sexp "n ball")
-    ("r" swiper "go seek")
-    ("(" backward-paragraph "p chunk")
-    (")" forward-paragraph "n chunk")
-    ("[" beginning-of-buffer "buff first")
-    ("]" end-of-buffer "buff last"))
- 
-   "text action"
-   (("RET" newline "newline")
-    ("*" indent-for-tab-command "indent")
-    ("d" delete-backward-char "back")
-    ("u" delete-forward-char "delete")
-    ("it" kill-ring-save "copy")
-    ("i SPC" kill-region "cut")
-    ("ia" yank "paste")
-    ("ig" yank-pop "paste pop")
-    ("il" undo-fu-only-undo "undo")
-    ("if" undo-fu-only-redo "redo")
-    ("u" comment-line "comment")
-    ("o" set-mark-command "mark")
-    ("-" exchange-point-and-mark "mark switch")
-    ("\\" move-text-region-up "region up")
-    ("+" move-text-region-down "region down"))))
-#+end_src
 *** agenda
 #+begin_src emacs-lisp
 (major-mode-hydra-define+ (org-agenda-mode)
@@ -595,6 +561,45 @@ Note, that this is guess work."
     ("]" ork-agenda-refile "refile")
     ("l" org-agenda-redo-all "refresh")
     ("\\" org-agenda-kill "delete"))))
+#+end_src
+*** text/code
+#+begin_src emacs-lisp
+(major-mode-hydra-define+ (conf-unix-mode conf-windows-mode emacs-lisp-mode fundamental-mode nix-mode text-mode org-mode sh-mode)
+  (:color amaranth :quit-key ("<f19>") :title "text/code")
+  (
+   "text nav"
+   (("SPC" previous-line "pree line")
+    ("e" next-line "nex line")
+    ("t" backward-char "pree char")
+    ("s" forward-char  "nex char")
+    ("a" backward-word "pree word")
+    ("n" forward-word "nex word")
+    ("l" move-beginning-of-line "line first")
+    ("c" move-end-of-line "line last")
+    ("g" backward-sexp "pree ball")
+    ("p" forward-sexp "nex ball")
+    ("r" swiper "search")
+    ("(" backward-paragraph "pree chunk")
+    (")" forward-paragraph "nex chunk")
+    ("[" beginning-of-buffer "buff first")
+    ("]" end-of-buffer "buff last"))
+ 
+   "text action"
+   (("RET" newline "newline")
+    ("*" indent-for-tab-command "indent")
+    ("d" delete-backward-char "pree dell")
+    ("u" delete-forward-char "nex dell")
+    ("it" kill-ring-save "copy")
+    ("i SPC" kill-region "snip")
+    ("ia" yank "paste")
+    ("ig" yank-pop "paste pop")
+    ("il" undo-fu-only-undo "undo")
+    ("if" undo-fu-only-redo "redo")
+    ("u" comment-line "comment")
+    ("o" set-mark-command "mark")
+    ("-" exchange-point-and-mark "mark switch")
+    ("\\" move-text-region-up "region up")
+    ("+" move-text-region-down "region down"))))
 #+end_src
 *** magit
 #+begin_src emacs-lisp
@@ -632,12 +637,7 @@ Note, that this is guess work."
     ("i<" magit-git-command "git command")
     ("if" magit-reset "git reset" :exit t)
     ("o" set-mark-command "git mark")
-    ("-" exchange-point-and-mark "git mark switch"))))
-#+end_src
-* startup
-#+begin_src emacs-lisp
-(set-frame-name "main")
-(toggle-frame-fullscreen)
+    ("-" exchange-point-and-markf "git mark switch"))))
 #+end_src
 * other preferences
 #+begin_src emacs-lisp
