@@ -388,54 +388,54 @@ Note, that this is guess work."
     ("il" dired-do-rename "deer rename")
     )))
 #+end_src
-emacs
-#+begin_src emacs-lisp
-(major-mode-hydra-define (calendar-mode conf-unix-mode conf-windows-mode dired-mode emacs-lisp-mode fundamental-mode help-mode lisp-interaction-mode magit-repolist-mode magit-revision-mode magit-log-mode magit-process-mode magit-stash-mode magit-section-mode magit-diff-mode magit-log-select-mode magit-submodule-list-mode magit-refs-mode magit-stashes-mode magit-merge-preview-mode magit-reflog-mode magit-cherry-mode magit-status-mode nix-mode org-mode org-agenda-mode package-menu-mode sh-mode text-mode)
-  (:color amaranth :quit-key ("<f19>") :title "emacs")
-  ("emacs nav"
-   (("y" other-window "nex win")
-    ("m" other-frame "nex frame")
-    ("v" previous-buffer "pre buffer")
-    ("x" next-buffer "nex buffer")
-    ("h SPC" ivy-switch-buffer "go buffer")
-    ("w" ivy-resume "mini resume"))
+*** emacs
+  #+begin_src emacs-lisp
+  (major-mode-hydra-define (calendar-mode conf-unix-mode conf-windows-mode dired-mode emacs-lisp-mode fundamental-mode help-mode lisp-interaction-mode magit-repolist-mode magit-revision-mode magit-log-mode magit-process-mode magit-stash-mode magit-section-mode magit-diff-mode magit-log-select-mode magit-submodule-list-mode magit-refs-mode magit-stashes-mode magit-merge-preview-mode magit-reflog-mode magit-cherry-mode magit-status-mode nix-mode org-mode org-agenda-mode package-menu-mode sh-mode text-mode)
+    (:color amaranth :quit-key ("<f19>") :title "emacs")
+    ("emacs nav"
+     (("y" other-window "nex win")
+      ("m" other-frame "nex frame")
+      ("v" previous-buffer "pre buffer")
+      ("x" next-buffer "nex buffer")
+      ("h SPC" ivy-switch-buffer "go buffer")
+      ("w" ivy-resume "mini resume"))
 
-   "emacs view"
-   (("fn" split-window-right "make win")
-    ("fh" split-window-below "make win down")
-    ("fc" make-frame-command "make frame")
-    ("f;" delete-window "delete win")
-    ("f>" delete-other-windows "delete oth win")
-    ("f," delete-frame "delete frame")
-    ("fp" fit-window-to-buffer "fit win")
-    ("f]" balance-windows "balance win")
-    ("fu" maximize-window "max win")
-    ("fb" toggle-frame-fullscreen "full frame")
-    ("fe" (recenter nil) "recenter")
-    ("fi" (recenter 0) "recenter top")
-    ("fo" (recenter -1) "recenter bot")
-    ("<f13>" (setq hydra-is-helpful t) "show hydra")
-    ("<f24>" (setq hydra-is-helpful nil) "hide hydra"))
+     "emacs view"
+     (("fn" split-window-right "make win")
+      ("fh" split-window-below "make win down")
+      ("fc" make-frame-command "make frame")
+      ("f;" delete-window "delete win")
+      ("f>" delete-other-windows "delete oth win")
+      ("f," delete-frame "delete frame")
+      ("fp" fit-window-to-buffer "fit win")
+      ("f]" balance-windows "balance win")
+      ("fu" maximize-window "max win")
+      ("fb" toggle-frame-fullscreen "full frame")
+      ("fe" (recenter nil) "recenter")
+      ("fi" (recenter 0) "recenter top")
+      ("fo" (recenter -1) "recenter bot")
+      ("<f13>" (setq hydra-is-helpful t) "show hydra")
+      ("<f24>" (setq hydra-is-helpful nil) "hide hydra"))
 
-   "emacs action"
-    (
-    ("hw" revert-buffer "revert buff")
-    ("ha" save-buffer "write buff")
-    ("h=" (save-some-buffers t nil) "write all buff")
-    ("hg" kill-this-buffer "kill buff")
-    ("h[" kill-buffer "kill buff list")
-    ("hd" counsel-M-x "command")
-    ("hf" magit-status "magit")
-    ("h RET" counsel-dired "dired")
-    ("hr" counsel-find-file "find file")
-    ("hl" eval-last-sexp "eval last")
-    ("h$" with-editor-finish "editor finish")
-    ("j" org-capture "capture")
-    ("htt" describe-function "help function")
-    ("#" org-capture-goto-last-stored "go last capture")
-    ("k" keyboard-quit "kb quit")
-    ("@" save-buffers-kill-emacs "kill emacs confirm"))))
-#+end_src
+     "emacs action"
+      (
+      ("hw" revert-buffer "revert buff")
+      ("ha" save-buffer "write buff")
+      ("h=" (save-some-buffers t nil) "write all buff")
+      ("hg" kill-this-buffer "kill buff")
+      ("h[" kill-buffer "kill buff list")
+      ("hd" counsel-M-x "command")
+      ("hf" magit-status "magit")
+      ("h RET" counsel-dired "dired")
+      ("hr" counsel-find-file "find file")
+      ("hl" eval-last-sexp "eval last")
+      ("h$" with-editor-finish "editor finish")
+      ("j" org-capture "capture")
+      ("htt" describe-function "help function")
+      ("#" org-capture-goto-last-stored "go last capture")
+      ("k" keyboard-quit "kb quit")
+      ("@" save-buffers-kill-emacs "kill emacs confirm"))))
+  #+end_src
 *** minibuffer
 #+begin_src emacs-lisp
 (major-mode-hydra-define (minibuffer-inactive-mode)
