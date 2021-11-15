@@ -93,6 +93,7 @@ install org-dotemacs package on emacs, then clone this repo to the user-emacs-di
  spaceline-separator-dir-left '(right . right)
  spaceline-separator-dir-right '(left . left))
 
+(use-package persp-mode)
 
 ;; (use-package simple-modeline
 ;;   :hook (after-init . simple-modeline-mode)
@@ -333,7 +334,7 @@ Note, that this is guess work."
 (use-package major-mode-hydra
   :ensure t
   :bind
-  ("<f18>" . major-mode-hydra))
+  ("<f13>" . major-mode-hydra))
   (setq hydra-is-helpful nil)
 #+end_src
 *** calendar
@@ -374,7 +375,7 @@ Note, that this is guess work."
    "dired view"
    (("t" dired-subtree-remove "deer hide sub")
     ("s" dired-subtree-insert "deer show sub")
-    ("u" dired-hide-details-mode "deer details"))
+    ("b" dired-hide-details-mode "deer details"))
   
    "dired action"
    (("RET" dired-mark "deer mark")
@@ -384,57 +385,63 @@ Note, that this is guess work."
     ("it" dired-ranger-copy "deer copy")
     ("i SPC" dired-ranger-move "deer move")
     ("ia" dired-ranger-paste "deer paste")
-    ("id" dired-do-delete "deer dell")
+    ("i DEL" dired-do-delete "deer dell")
     ("il" dired-do-rename "deer rename")
     )))
 #+end_src
 *** emacs
   #+begin_src emacs-lisp
-  (major-mode-hydra-define (calendar-mode conf-unix-mode conf-windows-mode dired-mode emacs-lisp-mode fundamental-mode help-mode lisp-interaction-mode magit-repolist-mode magit-revision-mode magit-log-mode magit-process-mode magit-stash-mode magit-section-mode magit-diff-mode magit-log-select-mode magit-submodule-list-mode magit-refs-mode magit-stashes-mode magit-merge-preview-mode magit-reflog-mode magit-cherry-mode magit-status-mode nix-mode org-mode org-agenda-mode package-menu-mode sh-mode text-mode)
-    (:color amaranth :quit-key ("<f19>") :title "emacs")
-    ("emacs nav"
-     (("y" other-window "nex win")
-      ("m" other-frame "nex frame")
-      ("v" previous-buffer "pre buffer")
-      ("x" next-buffer "nex buffer")
-      ("h SPC" ivy-switch-buffer "go buffer")
-      ("w" ivy-resume "mini resume"))
+	      (major-mode-hydra-define (calendar-mode conf-unix-mode conf-windows-mode dired-mode emacs-lisp-mode fundamental-mode help-mode lisp-interaction-mode magit-repolist-mode magit-revision-mode magit-log-mode magit-process-mode magit-stash-mode magit-section-mode magit-diff-mode magit-log-select-mode magit-submodule-list-mode magit-refs-mode magit-stashes-mode magit-merge-preview-mode magit-reflog-mode magit-cherry-mode magit-status-mode nix-mode org-mode org-agenda-mode package-menu-mode sh-mode text-mode)
+		(:color amaranth :quit-key ("<f19>") :title "emacs")
+		("emacs nav"
+		 (("y" other-window "nex win")
+		  ("m" other-frame "nex frame")
+		  ("v" previous-buffer "pre buffer")
+		  ("x" next-buffer "nex buffer")
+		  ("h SPC" persp-switch-to-buffer "go buffer")
+		  ("h (" persp-switch "go purse")
+		  ("j" ivy-resume "mini resume"))
 
-     "emacs view"
-     (("fn" split-window-right "make win")
-      ("fh" split-window-below "make win down")
-      ("fc" make-frame-command "make frame")
-      ("f;" delete-window "delete win")
-      ("f>" delete-other-windows "delete oth win")
-      ("f," delete-frame "delete frame")
-      ("fp" fit-window-to-buffer "fit win")
-      ("f]" balance-windows "balance win")
-      ("fu" maximize-window "max win")
-      ("fb" toggle-frame-fullscreen "full frame")
-      ("fe" (recenter nil) "recenter")
-      ("fi" (recenter 0) "recenter top")
-      ("fo" (recenter -1) "recenter bot")
-      ("<f13>" (setq hydra-is-helpful t) "show hydra")
-      ("<f24>" (setq hydra-is-helpful nil) "hide hydra"))
+		 "emacs view"
+		 (("dn" split-window-right "make win")
+		  ("dh" split-window-below "make win down")
+		  ("dc" make-frame-command "make frame")
+		  ("d;" delete-window "delete win")
+		  ("d>" delete-other-windows "delete oth win")
+		  ("d," delete-frame "delete frame")
+		  ("dp" fit-window-to-buffer "fit win")
+		  ("d]" balance-windows "balance win")
+		  ("db" maximize-window "max win")
+		  ("dk" toggle-frame-fullscreen "full frame")
+		  ("de" (recenter nil) "recenter")
+		  ("di" (recenter 0) "recenter top")
+		  ("do" (recenter -1) "recenter bot")
+		  ("<f16>" (setq hydra-is-helpful t) "show hydra")
+		  ("<f22>" (setq hydra-is-helpful nil) "hide hydra"))
 
-     "emacs action"
-      (
-      ("hw" revert-buffer "revert buff")
-      ("ha" save-buffer "write buff")
-      ("h=" (save-some-buffers t nil) "write all buff")
-      ("hg" kill-this-buffer "kill buff")
-      ("h[" kill-buffer "kill buff list")
-      ("hd" counsel-M-x "command")
-      ("hf" magit-status "magit")
-      ("h RET" counsel-dired "dired")
-      ("hr" counsel-find-file "find file")
-      ("hl" eval-last-sexp "eval last")
-      ("h$" with-editor-finish "editor finish")
-      ("j" org-capture "capture")
-      ("htt" describe-function "help function")
-      ("#" org-capture-goto-last-stored "go last capture")
-      ("k" keyboard-quit "kb quit")
-      ("@" save-buffers-kill-emacs "kill emacs confirm"))))
+		 "emacs action"
+		 (("hj" revert-buffer "revert buff")
+		  ("ha" save-buffer "write buff")
+		  ("h=" (save-some-buffers t nil) "write all buff")
+		  ("hg" kill-this-buffer "kill buff")
+		  ("h[" kill-buffer "kill buff list")
+		  ("h DEL" counsel-M-x "command")
+		  ("hd" magit-status "magit")
+		  ("h RET" counsel-dired "dired")
+		  ("hr" counsel-find-file "find file")
+		  ("hl" eval-last-sexp "eval last")
+		  ("h$" with-editor-finish "editor finish")
+		  ("j" org-capture "capture")
+		  ("#" org-capture-goto-last-stored "go last capture")
+		  ("k" keyboard-quit "kb quit")
+		  ("@" save-buffers-kill-emacs "kill emacs confirm")
+		  ("hta" persp-add-buffer "purse add")
+		  ("htg" persp-remove-buffer "purse remove")
+		  ("ht DEL" persp-set-buffer "purse add ex")
+		  ("htj" persp-kill "purse delete")
+		  ("htr" persp-rename "purse rename")
+		  ("htl" persp-save-state-to-file "purse save")
+		  ("htd" persp-load-state-from-file "purse load"))))
   #+end_src
 *** minibuffer
 #+begin_src emacs-lisp
@@ -450,15 +457,15 @@ Note, that this is guess work."
     ("c" move-end-of-line "line last"))
 
    "text action"
-   (("d" delete-backward-char "back")
+   (("DEL" delete-backward-char "back")
     ("<" delete-forward-char "delete")
     ("it" kill-ring-save "copy")
     ("i SPC" kill-region "cut")
     ("ia" yank "paste")
     ("ig" yank-pop "paste pop")
-    ("id" ivy-insert-current "ivy insert")
+    ("i DEL" ivy-insert-current "ivy insert")
     ("il" undo-fu-only-undo "undo")
-    ("if" undo-fu-only-redo "redo"))
+    ("id" undo-fu-only-redo "redo"))
    
    "mini nav"
    (("SPC" ivy-previous-line "p item")
@@ -528,9 +535,9 @@ Note, that this is guess work."
     ("C-h" org-cycle "or sike")
     ("C->" org-global-cycle "or global sike")
     ("C-l" org-time-stamp "or time stamp")
-    ("C-d" org-capture-finalize "or cap fine")
+    ("C-DEL" org-capture-finalize "or cap fine")
     ("C-<" org-capture-kill "or cap can")
-    ("C-f" org-capture-refile "or cap ree"))))
+    ("C-d" org-capture-refile "or cap ree"))))
 #+end_src
 *** agenda
 #+begin_src emacs-lisp
@@ -557,7 +564,7 @@ Note, that this is guess work."
     ("p" ork-travel "travel")
     ("RET" agenda-show-narrow "show thought")
     ("*" org-agenda-goto "goto thought")
-    ("w" outline-show-all "org show all") 
+    ("j" outline-show-all "org show all") 
     ("]" ork-agenda-refile "refile")
     ("l" org-agenda-redo-all "refresh")
     ("\\" org-agenda-kill "delete"))))
@@ -587,15 +594,15 @@ Note, that this is guess work."
    "text action"
    (("RET" newline "newline")
     ("*" indent-for-tab-command "indent")
-    ("d" delete-backward-char "pree dell")
-    ("u" delete-forward-char "nex dell")
+    ("DEL" delete-backward-char "pree dell")
+    ("<" delete-forward-char "nex dell")
     ("it" kill-ring-save "copy")
     ("i SPC" kill-region "snip")
     ("ia" yank "paste")
     ("ig" yank-pop "paste pop")
     ("il" undo-fu-only-undo "undo")
-    ("if" undo-fu-only-redo "redo")
-    ("u" comment-line "comment")
+    ("id" undo-fu-only-redo "redo")
+    ("k" comment-line "comment")
     ("o" set-mark-command "mark")
     ("-" exchange-point-and-mark "mark switch")
     ("\\" move-text-region-up "region up")
@@ -620,7 +627,7 @@ Note, that this is guess work."
    (("t" magit-section-hide "git hide seck")
     ("s" magit-section-show "git show seck")
     ("ii" magit-refresh "git refresh")
-    ("iu" (print magit--default-directory) "git show def deer"))
+    ("ib" (print magit--default-directory) "git show def deer"))
   
    "magit action"
    (("i SPC" magit-stage "git stage")
@@ -632,10 +639,10 @@ Note, that this is guess work."
     ("ig" magit-branch "git branch" :exit t)
     ("ia" magit-stash "git stash" :exit t)
     ("il" magit-rebase "git rebase" :exit t)
-    ("iw" magit-merge "git merge" :exit t)
-    ("id" magit-git-command-topdir "git command top")
+    ("ij" magit-merge "git merge" :exit t)
+    ("i DEL" magit-git-command-topdir "git command top")
     ("i<" magit-git-command "git command")
-    ("if" magit-reset "git reset" :exit t)
+    ;; ("id" magit-reset "git reset" :exit t)
     ("o" set-mark-command "git mark")
     ("-" exchange-point-and-markf "git mark switch"))))
 #+end_src
