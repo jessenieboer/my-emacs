@@ -93,7 +93,7 @@ install org-dotemacs package on emacs, then clone this repo to the user-emacs-di
  spaceline-separator-dir-left '(right . right)
  spaceline-separator-dir-right '(left . left))
 
-(use-package persp-mode)
+;(use-package persp-mode)
 
 ;; (use-package simple-modeline
 ;;   :hook (after-init . simple-modeline-mode)
@@ -403,19 +403,19 @@ Note, that this is guess work."
 		  ("j" ivy-resume "mini resume"))
 
 		 "emacs view"
-		 (("dn" split-window-right "make win")
-		  ("dh" split-window-below "make win down")
-		  ("dc" make-frame-command "make frame")
-		  ("d;" delete-window "delete win")
-		  ("d>" delete-other-windows "delete oth win")
-		  ("d," delete-frame "delete frame")
-		  ("dp" fit-window-to-buffer "fit win")
-		  ("d]" balance-windows "balance win")
-		  ("db" maximize-window "max win")
-		  ("dk" toggle-frame-fullscreen "full frame")
-		  ("de" (recenter nil) "recenter")
-		  ("di" (recenter 0) "recenter top")
-		  ("do" (recenter -1) "recenter bot")
+		 (("fn" split-window-right "make win")
+		  ("fh" split-window-below "make win down")
+		  ("fc" make-frame-command "make frame")
+		  ("f;" delete-window "delete win")
+		  ("f>" delete-other-windows "delete oth win")
+		  ("f," delete-frame "delete frame")
+		  ("fp" fit-window-to-buffer "fit win")
+		  ("f]" balance-windows "balance win")
+		  ("fb" maximize-window "max win")
+		  ("fk" toggle-frame-fullscreen "full frame")
+		  ("fe" (recenter nil) "recenter")
+		  ("fi" (recenter 0) "recenter top")
+		  ("fo" (recenter -1) "recenter bot")
 		  ("<f16>" (setq hydra-is-helpful t) "show hydra")
 		  ("<f22>" (setq hydra-is-helpful nil) "hide hydra"))
 
@@ -425,8 +425,8 @@ Note, that this is guess work."
 		  ("h=" (save-some-buffers t nil) "write all buff")
 		  ("hg" kill-this-buffer "kill buff")
 		  ("h[" kill-buffer "kill buff list")
-		  ("h DEL" counsel-M-x "command")
-		  ("hd" magit-status "magit")
+		  ("hd" counsel-M-x "command")
+		  ("hf" magit-status "magit")
 		  ("h RET" counsel-dired "dired")
 		  ("hr" counsel-find-file "find file")
 		  ("hl" eval-last-sexp "eval last")
@@ -441,7 +441,7 @@ Note, that this is guess work."
 		  ("htj" persp-kill "purse delete")
 		  ("htr" persp-rename "purse rename")
 		  ("htl" persp-save-state-to-file "purse save")
-		  ("htd" persp-load-state-from-file "purse load"))))
+		  ("htf" persp-load-state-from-file "purse load"))))
   #+end_src
 *** minibuffer
 #+begin_src emacs-lisp
@@ -601,7 +601,7 @@ Note, that this is guess work."
     ("ia" yank "paste")
     ("ig" yank-pop "paste pop")
     ("il" undo-fu-only-undo "undo")
-    ("id" undo-fu-only-redo "redo")
+    ("if" undo-fu-only-redo "redo")
     ("k" comment-line "comment")
     ("o" set-mark-command "mark")
     ("-" exchange-point-and-mark "mark switch")
