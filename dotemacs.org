@@ -93,7 +93,10 @@ install org-dotemacs package on emacs, then clone this repo to the user-emacs-di
  spaceline-separator-dir-left '(right . right)
  spaceline-separator-dir-right '(left . left))
 
-;(use-package persp-mode)
+(use-package perspective
+  :config
+  (setq persp-state-default-file "C:/linux-structure/home/jessenieboer/persp-state"
+	persp-state-backup-file "C:/linux-structure/home/jessenieboer/persp-state-backup"))
 
 ;; (use-package simple-modeline
 ;;   :hook (after-init . simple-modeline-mode)
@@ -256,11 +259,6 @@ install org-dotemacs package on emacs, then clone this repo to the user-emacs-di
 #+begin_src emacs-lisp
 (use-package haskell-mode)
 #+end_src  
-* startup
-#+begin_src emacs-lisp
-(set-frame-name "main")
-(toggle-frame-fullscreen)
-#+end_src
 * bindings
 #+begin_src emacs-lisp
 (use-package move-text)
@@ -391,57 +389,61 @@ Note, that this is guess work."
 #+end_src
 *** emacs
   #+begin_src emacs-lisp
-	      (major-mode-hydra-define (calendar-mode conf-unix-mode conf-windows-mode dired-mode emacs-lisp-mode fundamental-mode help-mode lisp-interaction-mode magit-repolist-mode magit-revision-mode magit-log-mode magit-process-mode magit-stash-mode magit-section-mode magit-diff-mode magit-log-select-mode magit-submodule-list-mode magit-refs-mode magit-stashes-mode magit-merge-preview-mode magit-reflog-mode magit-cherry-mode magit-status-mode nix-mode org-mode org-agenda-mode package-menu-mode sh-mode text-mode)
-		(:color amaranth :quit-key ("<f19>") :title "emacs")
-		("emacs nav"
-		 (("y" other-window "nex win")
-		  ("m" other-frame "nex frame")
-		  ("v" previous-buffer "pre buffer")
-		  ("x" next-buffer "nex buffer")
-		  ("h SPC" persp-switch-to-buffer "go buffer")
-		  ("h (" persp-switch "go purse")
-		  ("j" ivy-resume "mini resume"))
+    (major-mode-hydra-define (calendar-mode conf-unix-mode conf-windows-mode dired-mode emacs-lisp-mode fundamental-mode help-mode lisp-interaction-mode magit-repolist-mode magit-revision-mode magit-log-mode magit-process-mode magit-stash-mode magit-section-mode magit-diff-mode magit-log-select-mode magit-submodule-list-mode magit-refs-mode magit-stashes-mode magit-merge-preview-mode magit-reflog-mode magit-cherry-mode magit-status-mode nix-mode org-mode org-agenda-mode package-menu-mode sh-mode text-mode)
+      (:color amaranth :quit-key ("<f19>") :title "emacs")
+      ("emacs nav"
+       (("y" other-window "nex win")
+	("m" other-frame "nex frame")
+	("v" previous-buffer "pre buff")
+	("x" next-buffer "nex buffer")
+	("h SPC" persp-counsel-switch-buffer "go buffer")
+	("h (" counsel-switch-buffer "go buffer all")
+	("j" ivy-resume "mini resume")
+	("de" persp-switch "go purse"))
 
-		 "emacs view"
-		 (("fn" split-window-right "make win")
-		  ("fh" split-window-below "make win down")
-		  ("fc" make-frame-command "make frame")
-		  ("f;" delete-window "delete win")
-		  ("f>" delete-other-windows "delete oth win")
-		  ("f," delete-frame "delete frame")
-		  ("fp" fit-window-to-buffer "fit win")
-		  ("f]" balance-windows "balance win")
-		  ("fb" maximize-window "max win")
-		  ("fk" toggle-frame-fullscreen "full frame")
-		  ("fe" (recenter nil) "recenter")
-		  ("fi" (recenter 0) "recenter top")
-		  ("fo" (recenter -1) "recenter bot")
-		  ("<f16>" (setq hydra-is-helpful t) "show hydra")
-		  ("<f22>" (setq hydra-is-helpful nil) "hide hydra"))
+       "emacs view"
+       (("fn" split-window-right "make win")
+	("fh" split-window-below "make win down")
+	("fc" make-frame-command "make frame")
+	("f;" delete-window "delete win")
+	("f>" delete-other-windows "delete oth win")
+	("f," delete-frame "delete frame")
+	("fp" fit-window-to-buffer "fit win")
+	("f]" balance-windows "balance win")
+	("fb" maximize-window "max win")
+	("fk" toggle-frame-fullscreen "full frame")
+	("fe" (recenter nil) "recenter")
+	("fi" (recenter 0) "recenter top")
+	("fo" (recenter -1) "recenter bot")
+	("<f16>" (setq hydra-is-helpful t) "show hydra")
+	("<f22>" (setq hydra-is-helpful nil) "hide hydra"))
 
-		 "emacs action"
-		 (("hj" revert-buffer "revert buff")
-		  ("ha" save-buffer "write buff")
-		  ("h=" (save-some-buffers t nil) "write all buff")
-		  ("hg" kill-this-buffer "kill buff")
-		  ("h[" kill-buffer "kill buff list")
-		  ("hd" counsel-M-x "command")
-		  ("hf" magit-status "magit")
-		  ("h RET" counsel-dired "dired")
-		  ("hr" counsel-find-file "find file")
-		  ("hl" eval-last-sexp "eval last")
-		  ("h$" with-editor-finish "editor finish")
-		  ("j" org-capture "capture")
-		  ("#" org-capture-goto-last-stored "go last capture")
-		  ("k" keyboard-quit "kb quit")
-		  ("@" save-buffers-kill-emacs "kill emacs confirm")
-		  ("hta" persp-add-buffer "purse add")
-		  ("htg" persp-remove-buffer "purse remove")
-		  ("ht DEL" persp-set-buffer "purse add ex")
-		  ("htj" persp-kill "purse delete")
-		  ("htr" persp-rename "purse rename")
-		  ("htl" persp-save-state-to-file "purse save")
-		  ("htf" persp-load-state-from-file "purse load"))))
+       "emacs action"
+       (("hj" revert-buffer "revert buff")
+	("ha" save-buffer "write buff")
+	("h=" (save-some-buffers t nil) "write all buff")
+	("hg" (kill-buffer nil) "kill buff")
+	("h[" kill-buffer "kill buff list")
+	("hd" counsel-M-x "command")
+	("hf" magit-status "magit")
+	("h RET" counsel-dired "dired")
+	("hr" counsel-find-file "find file")
+	("hl" eval-last-sexp "eval last")
+	("h$" with-editor-finish "editor finish")
+	("j" org-capture "capture")
+	("#" org-capture-goto-last-stored "go last capture")
+	("k" keyboard-quit "kb quit")
+	("@" save-buffers-kill-emacs "kill emacs confirm")
+	("db" persp-mode "purse mode")    
+	("dh" persp-add-buffer "purse add")
+	("dp" persp-remove-buffer "purse remove")
+	("dn" persp-set-buffer "purse add ex")
+	("di" persp-kill "purse delete")
+	("do" persp-rename "purse rename")
+	("dc" (persp-state-save persp-state-default-file) "purse save")
+	("du" (persp-state-load persp-state-default-file) "purse load")
+	("d," (persp-state-save persp-state-backup-file) "purse save backup")
+        ("d:" (persp-state-load persp-state-backup-file) "purse load backup"))))
   #+end_src
 *** minibuffer
 #+begin_src emacs-lisp
@@ -645,6 +647,11 @@ Note, that this is guess work."
     ;; ("id" magit-reset "git reset" :exit t)
     ("o" set-mark-command "git mark")
     ("-" exchange-point-and-markf "git mark switch"))))
+#+end_src
+* startup
+#+begin_src emacs-lisp
+(set-frame-name "main")
+(toggle-frame-fullscreen)
 #+end_src
 * other preferences
 #+begin_src emacs-lisp
