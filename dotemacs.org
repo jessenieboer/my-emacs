@@ -97,6 +97,23 @@ install org-dotemacs package on emacs, then clone this repo to the user-emacs-di
   :config
   (setq persp-state-default-file "C:/linux-structure/home/jessenieboer/persp-state"
 	persp-state-backup-file "C:/linux-structure/home/jessenieboer/persp-state-backup"))
+(persp-mode)
+
+;; (use-package window-purpose)
+;; (purpose-mode)
+;; (add-to-list 'purpose-user-mode-purposes '(dired-mode . fs)) ;interacting with file system
+;; ;(add-to-list 'purpose-user-mode-purposes '(magit-status-mode . git-main))
+;; ;(add-to-list 'purpose-user-name-purposes '(<name> . <purpose>))
+;; ;(add-to-list 'purpose-user-regexp-purposes '(<pattern> . <purpose>))
+;; (setq purpose-use-default-configuration t) 
+;; (purpose-compile-user-configuration)
+
+;; (require 'window-purpose-x)
+;; (puthash "my-emacs-git" (purpose-conf "my-emacs-git" :mode-purposes '((magit-status-mode . git-status))) purpose-x-persp-confs)
+;; (puthash "my-emacs-git" (purpose-conf "my-emacs-git" :mode-purposes '((magit-log-mode . git-log))) purpose-x-persp-confs)
+;; (purpose-x-persp-setup)
+;; (purpose-x-magit-multi-on)
+
 
 ;; (use-package simple-modeline
 ;;   :hook (after-init . simple-modeline-mode)
@@ -237,28 +254,6 @@ install org-dotemacs package on emacs, then clone this repo to the user-emacs-di
 		   :file "~/internal/production/software-production/journal.org"
 		   :template ("%?")))))))))
 #+end_src
-* git
-#+begin_src emacs-lisp
-(use-package magit
-  :config
-  (cond
-   ((string-equal system-type "windows-nt")
-    (progn
-      (setq magit-git-executable "C:/linux-structure/usr/Git/bin/git.exe")))
-   ((string-equal system-type "gnu/linux")
-    (progn
-      (setq magit-git-executable "C:/linux-structure/usr/Git/bin/git.exe")))))
-
-(use-package ssh-agency)
-#+end_src
-* nix
-#+begin_src emacs-lisp
-(use-package nix-mode)
-#+end_src
-* haskell
-#+begin_src emacs-lisp
-(use-package haskell-mode)
-#+end_src  
 * bindings
 #+begin_src emacs-lisp
 (use-package move-text)
@@ -335,6 +330,36 @@ Note, that this is guess work."
   ("<f13>" . major-mode-hydra))
   (setq hydra-is-helpful nil)
 #+end_src
+*** agenda
+#+begin_src emacs-lisp
+(major-mode-hydra-define+ (org-agenda-mode)
+  (:color amaranth :quit-key ("<f19>") :title "agenda")
+  ("agenda nav"
+   (("SPC" org-agenda-previous-line "p item")
+    ("e" org-agenda-next-line "n item")
+    ("t" backward-char "p char")
+    ("s" forward-char  "n char")
+    ("(" backward-paragraph "p group")
+    (")" forward-paragraph "n group")
+    ("r" swiper "go seek"))
+   "agenda view"
+   (("\"" origami-close-node "hide group")
+    ("." origami-open-node "show group")
+    ("=" origami-close-all-nodes "hide all")
+    (";" origami-open-all-nodes "show all"))
+  "agenda action"
+   (("a" org-columns-previous-allowed-value "p value")
+    ("n" org-columns-next-allowed-value "n value")
+    ("g" ork-view "change view")
+    ("[" org-agenda-filter-by-category "restrict view")
+    ("p" ork-travel "travel")
+    ("RET" agenda-show-narrow "show thought")
+    ("*" org-agenda-goto "goto thought")
+    ("j" outline-show-all "org show all") 
+    ("]" ork-agenda-refile "refile")
+    ("l" org-agenda-redo-all "refresh")
+    ("\\" org-agenda-kill "delete"))))
+#+end_src
 *** calendar
 #+begin_src emacs-lisp
 (major-mode-hydra-define (calendar-mode)
@@ -391,7 +416,7 @@ Note, that this is guess work."
   #+begin_src emacs-lisp
   (major-mode-hydra-define (calendar-mode conf-unix-mode conf-windows-mode dired-mode emacs-lisp-mode fundamental-mode help-mode lisp-interaction-mode magit-repolist-mode magit-revision-mode magit-log-mode magit-process-mode magit-stash-mode magit-section-mode magit-diff-mode magit-log-select-mode magit-submodule-list-mode magit-refs-mode magit-stashes-mode magit-merge-preview-mode magit-reflog-mode magit-cherry-mode magit-status-mode nix-mode org-mode org-agenda-mode package-menu-mode sh-mode text-mode)
     (:color amaranth :quit-key ("<f19>") :title "emacs")
-    ("emacs nav"
+    ("emacs"
      (("y" other-window "nex win")
       ("m" other-frame "nex frame")
       ("v" persp-prev "pre purse")
@@ -399,8 +424,9 @@ Note, that this is guess work."
       ("x" persp-next "nex purse")
       ("?" next-buffer "nex buffer")
       ("h SPC" persp-counsel-switch-buffer "go buffer")
-      ("h (" counsel-switch-buffer "go buffer all")
+      ("h (" counsel-switch-buffer "go buffer all ")
       ("j" ivy-resume "mini resume")
+      ("db" persp-mode "purse mode")
       ("de" persp-switch "go purse"))
 
      "emacs view"
@@ -436,10 +462,9 @@ Note, that this is guess work."
       ("#" org-capture-goto-last-stored "go last capture")
       ("k" keyboard-quit "kb quit")
       ("@" save-buffers-kill-emacs "kill emacs confirm")
-      ("db" persp-mode "purse mode")    
-      ("dh" persp-add-buffer "purse add")
-      ("dp" persp-remove-buffer "purse remove")
-      ("dn" persp-set-buffer "purse add ex")
+      ("dh" (persp-add-buffer (current-buffer))"purse add")
+      ("dp" (persp-remove-buffer (current-buffer)) "purse remove")
+      ("dn" (persp-set-buffer (current-buffer)) "purse add ex")
       ("di" persp-kill "purse delete")
       ("do" persp-rename "purse rename")
       ("dc" (persp-state-save persp-state-default-file) "purse save")
@@ -447,6 +472,44 @@ Note, that this is guess work."
       ("d," (persp-state-save persp-state-backup-file) "purse save backup")
       ("d:" (persp-state-load persp-state-backup-file) "purse load backup"))))
   #+end_src
+*** magit
+#+begin_src emacs-lisp
+(major-mode-hydra-define+ (magit-repolist-mode magit-revision-mode magit-log-mode magit-process-mode magit-stash-mode magit-section-mode magit-diff-mode magit-log-select-mode magit-submodule-list-mode magit-refs-mode magit-stashes-mode magit-merge-preview-mode magit-reflog-mode magit-cherry-mode magit-status-mode)
+  (:color amaranth :quit-key ("<f19>") :title "magit")
+  (
+   "magit nav"
+   (("SPC" magit-previous-line "git pree line")
+    ("(" magit-section-backward "git pree seck")
+    ("e" magit-next-line "git nex line")
+    (")" magit-section-forward "git nex sect")
+    ("ie" magit-log "git log" :exit t)
+    ("ip" magit-show-refs "git refs" :exit t)
+    ("is" magit-process-buffer "git process")
+    ("ic" magit-remote "git remote" :exit t))
+
+   "magit view"
+   (("t" magit-section-hide "git hide seck")
+    ("s" magit-section-show "git show seck")
+    ("ii" magit-refresh "git refresh")
+    ("ib" (print magit--default-directory) "git show def deer"))
+  
+   "magit action"
+   (("i SPC" magit-stage "git stage")
+    ("i(" magit-unstage "git unstage")
+    ("i RET" magit-commit "git commit" :exit t)
+    ("it" magit-fetch "git fetch" :exit t)
+    ("i*" magit-push "git push" :exit t)
+    ("ir" magit-checkout "git checkout")
+    ("ig" magit-branch "git branch" :exit t)
+    ("ia" magit-stash "git stash" :exit t)
+    ("il" magit-rebase "git rebase" :exit t)
+    ("iw" magit-merge "git merge" :exit t)
+    ("i DEL" magit-git-command-topdir "git command top")
+    ("i<" magit-git-command "git command")
+    ;; ("id" magit-reset "git reset" :exit t)
+    ("o" set-mark-command "git mark")
+    ("-" exchange-point-and-markf "git mark switch"))))
+#+end_src
 *** minibuffer
 #+begin_src emacs-lisp
 (major-mode-hydra-define (minibuffer-inactive-mode)
@@ -543,36 +606,6 @@ Note, that this is guess work."
     ("C-<" org-capture-kill "or cap can")
     ("C-d" org-capture-refile "or cap ree"))))
 #+end_src
-*** agenda
-#+begin_src emacs-lisp
-(major-mode-hydra-define+ (org-agenda-mode)
-  (:color amaranth :quit-key ("<f19>") :title "agenda")
-  ("agenda nav"
-   (("SPC" org-agenda-previous-line "p item")
-    ("e" org-agenda-next-line "n item")
-    ("t" backward-char "p char")
-    ("s" forward-char  "n char")
-    ("(" backward-paragraph "p group")
-    (")" forward-paragraph "n group")
-    ("r" swiper "go seek"))
-   "agenda view"
-   (("\"" origami-close-node "hide group")
-    ("." origami-open-node "show group")
-    ("=" origami-close-all-nodes "hide all")
-    (";" origami-open-all-nodes "show all"))
-  "agenda action"
-   (("a" org-columns-previous-allowed-value "p value")
-    ("n" org-columns-next-allowed-value "n value")
-    ("g" ork-view "change view")
-    ("[" org-agenda-filter-by-category "restrict view")
-    ("p" ork-travel "travel")
-    ("RET" agenda-show-narrow "show thought")
-    ("*" org-agenda-goto "goto thought")
-    ("j" outline-show-all "org show all") 
-    ("]" ork-agenda-refile "refile")
-    ("l" org-agenda-redo-all "refresh")
-    ("\\" org-agenda-kill "delete"))))
-#+end_src
 *** text/code
 #+begin_src emacs-lisp
 (major-mode-hydra-define+ (conf-unix-mode conf-windows-mode emacs-lisp-mode fundamental-mode nix-mode text-mode org-mode sh-mode)
@@ -612,44 +645,6 @@ Note, that this is guess work."
     ("\\" move-text-region-up "region up")
     ("+" move-text-region-down "region down"))))
 #+end_src
-*** magit
-#+begin_src emacs-lisp
-(major-mode-hydra-define+ (magit-repolist-mode magit-revision-mode magit-log-mode magit-process-mode magit-stash-mode magit-section-mode magit-diff-mode magit-log-select-mode magit-submodule-list-mode magit-refs-mode magit-stashes-mode magit-merge-preview-mode magit-reflog-mode magit-cherry-mode magit-status-mode)
-  (:color amaranth :quit-key ("<f19>") :title "magit")
-  (
-   "magit nav"
-   (("SPC" magit-previous-line "git pree line")
-    ("(" magit-section-backward "git pree seck")
-    ("e" magit-next-line "git nex line")
-    (")" magit-section-forward "git nex sect")
-    ("ie" magit-log "git log" :exit t)
-    ("ip" magit-show-refs "git refs" :exit t)
-    ("is" magit-process-buffer "git process")
-    ("ic" magit-remote "git remote" :exit t))
-
-   "magit view"
-   (("t" magit-section-hide "git hide seck")
-    ("s" magit-section-show "git show seck")
-    ("ii" magit-refresh "git refresh")
-    ("ib" (print magit--default-directory) "git show def deer"))
-  
-   "magit action"
-   (("i SPC" magit-stage "git stage")
-    ("i(" magit-unstage "git unstage")
-    ("i RET" magit-commit "git commit" :exit t)
-    ("it" magit-fetch "git fetch" :exit t)
-    ("i*" magit-push "git push" :exit t)
-    ("ir" magit-checkout "git checkout")
-    ("ig" magit-branch "git branch" :exit t)
-    ("ia" magit-stash "git stash" :exit t)
-    ("il" magit-rebase "git rebase" :exit t)
-    ("iw" magit-merge "git merge" :exit t)
-    ("i DEL" magit-git-command-topdir "git command top")
-    ("i<" magit-git-command "git command")
-    ;; ("id" magit-reset "git reset" :exit t)
-    ("o" set-mark-command "git mark")
-    ("-" exchange-point-and-markf "git mark switch"))))
-#+end_src
 * startup
 #+begin_src emacs-lisp
 (set-frame-name "main")
@@ -666,4 +661,35 @@ Note, that this is guess work."
       ring-bell-function 'ignore
       global-auto-revert-mode t
       w32-recognize-altgr nil) 
+#+end_src
+* non-emacs tech
+** git
+#+begin_src emacs-lisp
+(use-package magit
+  :config
+  (cond
+   ((string-equal system-type "windows-nt")
+    (progn
+      (setq magit-git-executable "C:/linux-structure/usr/Git/bin/git.exe")))
+   ((string-equal system-type "gnu/linux")
+    (progn
+      (setq magit-git-executable "C:/linux-structure/usr/Git/bin/git.exe")))))
+
+(use-package ssh-agency)
+#+end_src
+** haskell
+#+begin_src emacs-lisp
+(use-package haskell-mode)
+#+end_src  
+** markdown
+#+begin_src emacs-lisp
+(use-package markdown-mode)
+#+end_src
+** nix
+#+begin_src emacs-lisp
+(use-package nix-mode)
+#+end_src
+** npm
+#+begin_src emacs-lisp
+(use-package npm-mode)
 #+end_src
