@@ -58,7 +58,7 @@ install org-dotemacs package on emacs, then clone this repo to the user-emacs-di
 (show-paren-mode 1)
 (setq-default fit-window-to-buffer-horizontally t)
 (add-to-list 'default-frame-alist '(font . "-outline-Source Code Variable-normal-normal-normal-mono-*-*-*-*-c-*-iso8859-7"))
-
+(global-auto-revert-mode 1)
 ;; (use-package ivy-posframe
 ;;   :config 
 ;;   (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display))))
@@ -700,5 +700,14 @@ Note, that this is guess work."
 #+end_src
 ** sql
 #+begin_src emacs-lisp
+(use-package ob-sql-mode
+  :ensure t)
+(require 'ob-sql-mode)
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((sql . t)))
+
 (require 'sqlplus)
+(use-package sql-indent)
 #+end_src
