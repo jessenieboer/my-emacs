@@ -390,8 +390,8 @@ Note, that this is guess work."
     (")" dired-next-dirline "nex deer")
     ("a" dired-single-up-directory "climb one ")
     ("=" dired-up-directory "climb")
-    ("n" dired-single-buffer  "viz one")
-    (";" dired-find-file "viz")
+    ("n" dired-single-buffer  "viz")
+    (";" dired-find-file "viz multi")
     ("p" dired-find-file-other-window  "viz other")
     ("]" dired-display-file "show other")
     ("r" dired-goto-file "goto"))
@@ -403,14 +403,11 @@ Note, that this is guess work."
   
    "dired action"
    (("RET" dired-mark "deer mark")
-    ("*" dired-unmark "deer unmark")
-    ("o" set-mark-command "mark")
-    ("-" exchange-point-and-mark "mark switch")
+    ("*" dired-unmark "deer unmark") 
     ("it" dired-ranger-copy "deer copy")
     ("i SPC" dired-ranger-move "deer move")
     ("ia" dired-ranger-paste "deer paste")
-    ("i DEL" dired-do-delete "deer dell")
-    ("il" dired-do-rename "deer rename"))))
+    ("i DEL" dired-do-delete "deer dell"))))
 #+end_src
 *** emacs
   #+begin_src emacs-lisp
@@ -458,7 +455,7 @@ Note, that this is guess work."
       ("ha" save-buffer "write buff")
       ("h=" (save-some-buffers t nil) "write all buff")
       ("hg" (kill-buffer nil) "delete buff")
-      ("h[" kill-buffer "delete buff list")
+      ("h[" kill-buffer "hard delete buff list")
       ("hd" counsel-M-x "command")
       ("hf" magit-status "magit")
       ("h RET" counsel-dired "dired")
@@ -609,9 +606,9 @@ Note, that this is guess work."
     ("C-h" org-cycle "or sike")
     ("C->" org-global-cycle "or global sike")
     ("C-l" org-time-stamp "or time stamp")
-    ("C-DEL" org-capture-finalize "or cap fine")
-    ("C-<" org-capture-kill "or cap can")
-    ("C-d" org-capture-refile "or cap ree"))))
+    ("C-d" org-capture-finalize "or cap fine")
+    ("C-f" org-capture-kill "or cap can")
+    ("C-<" org-capture-refile "or cap ree"))))
 #+end_src
 *** text/code
 #+begin_src emacs-lisp
@@ -639,7 +636,7 @@ Note, that this is guess work."
    (("RET" newline "newline")
     ("*" indent-for-tab-command "indent")
     ("DEL" delete-backward-char "pree dell")
-    ("<" delete-forward-char "nex dell")
+    ("'" delete-forward-char "nex dell")
     ("it" kill-ring-save "copy")
     ("i SPC" kill-region "snip")
     ("ia" yank "paste")
