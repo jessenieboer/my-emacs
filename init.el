@@ -10,3 +10,4 @@
 (org-babel-load-file (expand-file-name "dotemacs.org" user-emacs-directory))
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
+(put 'dired-find-alternate-file 'disabled nil)

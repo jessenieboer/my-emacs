@@ -76,7 +76,6 @@ install org-dotemacs package on emacs, then clone this repo to the user-emacs-di
 ;; todo buffer size display
 (use-package spaceline-config :ensure spaceline
   :config
-  ;;(spaceline-helm-mode 1)
   (spaceline-install
     'main
     '((my/hydra)
@@ -86,7 +85,8 @@ install org-dotemacs package on emacs, then clone this repo to the user-emacs-di
       (version-control :when active)
       (line-column)
       (global :when active)
-      (major-mode))))
+      (major-mode
+      (persp-name)))))
 
 (setq-default
  powerline-height 24
@@ -94,11 +94,36 @@ install org-dotemacs package on emacs, then clone this repo to the user-emacs-di
  spaceline-separator-dir-left '(right . right)
  spaceline-separator-dir-right '(left . left))
 
-(use-package perspective
+(use-package persp-mode
   :config
-  (setq persp-state-default-file "C:/linux-structure/home/jessenieboer/persp-state"
-	persp-state-backup-file "C:/linux-structure/home/jessenieboer/persp-state-backup"))
-(persp-mode)
+  (setq persp-state-default-file "C:/linux-structure/home/jessenieboer/persp-state"	
+        persp-autokill-buffer-on-remove 'kill
+        persp-nil-hidden t
+        persp-nil-name "nil"))
+
+(with-eval-after-load "persp-mode"
+  (with-eval-after-load "ivy"
+    (add-hook 'ivy-ignore-buffers
+              #'(lambda (b)
+                  (when persp-mode
+                    (let ((persp (get-current-persp)))
+                      (if persp
+                          (not (persp-contain-buffer-p b persp))
+                        nil)))))
+
+    (setq ivy-sort-functions-alist
+          (append ivy-sort-functions-alist
+                  '((persp-kill-buffer   . nil)
+                    (persp-remove-buffer . nil)
+                    (persp-add-buffer    . nil)
+                    (persp-switch        . nil)
+                    (persp-window-switch . nil)
+                    (persp-frame-switch  . nil))))))
+;; (use-package perspective
+;;   :config
+;;   (setq persp-state-default-file "C:/linux-structure/home/jessenieboer/persp-state"
+;; 	persp-state-backup-file "C:/linux-structure/home/jessenieboer/persp-state-backup"))
+;; (persp-mode)
 
 ;; (use-package window-purpose)
 ;; (purpose-mode)
@@ -262,17 +287,16 @@ install org-dotemacs package on emacs, then clone this repo to the user-emacs-di
 ** functions
 #+begin_src emacs-lisp
 ;; unused
-(defun other-win-rehydra ()
-  (interactive)
-  (progn
-					;(major-mode-hydra)
-    (major-mode-hydra-dispatch (buffer-local-value 'major-mode (window-buffer (other-window 1))))))
-;; unused
-(defun other-frame-rehydra ()
-  (interactive)
-  (other-frame 1)
-  (major-mode-hydra-dispatch (buffer-local-value 'major-mode 
-						 (window-buffer (next-window)))))
+; (defun other-win-rehydra ()
+  ; (interactive)
+  ; (other-window 1)
+  ; (major-mode-hydra-dispatch (buffer-local-value 'major-mode (window-buffer (other-window 1)))))
+; ;; unused
+; (defun other-frame-rehydra ()
+  ; (interactive)
+  ; (other-frame 1)
+  ; (major-mode-hydra-dispatch (buffer-local-value 'major-mode 
+						 ; (window-buffer (next-window)))))
 
 (defun agenda-show-narrow ()
   (interactive)
@@ -330,6 +354,10 @@ Note, that this is guess work."
   :bind
   ("<f13>" . major-mode-hydra))
   (setq hydra-is-helpful nil)
+
+(defun rehydra ()
+  (progn
+    (funcall (intern (format "major-mode-hydras/%s/nil" (buffer-local-value 'major-mode (window-buffer)))))))
 #+end_src
 *** agenda
 #+begin_src emacs-lisp
@@ -412,17 +440,15 @@ Note, that this is guess work."
 *** emacs
   #+begin_src emacs-lisp
   (major-mode-hydra-define (calendar-mode conf-unix-mode conf-windows-mode dired-mode emacs-lisp-mode fundamental-mode help-mode lisp-interaction-mode magit-repolist-mode magit-revision-mode magit-log-mode magit-process-mode magit-stash-mode magit-section-mode magit-diff-mode magit-log-select-mode magit-submodule-list-mode magit-refs-mode magit-stashes-mode magit-merge-preview-mode magit-reflog-mode magit-cherry-mode magit-status-mode nix-mode org-mode org-agenda-mode package-menu-mode sh-mode sql-interactive-mode sql-mode sqlplus-mode text-mode)
-    (:color amaranth :quit-key ("<f19>") :title "emacs")
+(:color amaranth :quit-key ("<f19>") :title "emacs")
     ("emacs nav"
      (("|" (other-window -1) "pree win")
-      ("y" other-window "nex win")
+      ("y" (other-window 1)  "nex win")
       ("&" (other-frame -1) "pree frame")      
       ("m" other-frame "nex frame")
-      ("!" previous-buffer "pre buff")
-      ("?" next-buffer "nex buff")
-      ("h SPC" persp-counsel-switch-buffer "go buff")
-      ("h (" counsel-switch-buffer "go buff all ")
-      ;; ("j" ivy-resume "mini resume")
+      ("!" previous-buffer "pre buffer")
+      ("?" next-buffer "nex buffer")
+      ("h SPC" counsel-switch-buffer "go buffer")
       ("uw" persp-mode "purse mode")
       ("v" persp-prev "pre purse")
       ("x" persp-next "nex purse")
@@ -451,11 +477,11 @@ Note, that this is guess work."
       ("<f22>" (setq hydra-is-helpful nil) "hide hydra"))
 
      "emacs action"
-     (("hj" revert-buffer "revert buff")
-      ("ha" save-buffer "write buff")
-      ("h=" (save-some-buffers t nil) "write all buff")
-      ("hg" (kill-buffer nil) "delete buff")
-      ("h[" kill-buffer "hard delete buff list")
+     (("hj" revert-buffer "revert buffer")
+      ("ha" save-buffer "write buffer")
+      ("h=" (save-some-buffers t nil) "write all buffers")
+      ("hg" (kill-buffer nil) "delete this buffer")
+      ("h[" kill-buffer "delete a buffer")
       ("hd" counsel-M-x "command")
       ("hf" magit-status "magit")
       ("h RET" counsel-dired "dired")
@@ -464,17 +490,20 @@ Note, that this is guess work."
       ("h$" with-editor-finish "editor finish")
       ("j" org-capture "capture")
       ("#" org-capture-goto-last-stored "go last capture")
-      ;; ("k" keyboard-quit "kb quit")
       ("@" save-buffers-kill-emacs "kill emacs confirm")
-      ("ud" (persp-add-buffer (current-buffer))"add buff")
-      ("ug" (persp-remove-buffer (current-buffer)) "remove buff")
-      ("ua" (persp-set-buffer (current-buffer)) "ex buff")
-      ("u[" persp-kill "delete purse")
+      ("ug" (persp-kill-buffer (current-buffer)) "delete this buffer")
+      ("u[" persp-kill-buffer "delete a buffer")
+      ("ua" (persp-add-buffer (current-buffer)) "add this buffer")
+      ("u=" persp-add-buffer "add a buffer")
+      ("ud" (persp-remove-buffer (current-buffer)) "remove this buffer")
+      ("u<" persp-remove-buffer "remove a buffer")
+      ("ur" persp-kill "delete purse")
+      ("ut" persp-copy "delete purse")
       ("u RET" persp-rename "rename purse")
-      ("ul" (persp-state-save persp-state-default-file) "save purse")
-      ("uf" (persp-state-load persp-state-default-file) "load purse")
-      ("u/" (persp-state-save persp-state-backup-file) "save backup purse")
-      ("u$" (persp-state-load persp-state-backup-file) "load backup purse"))))
+      ("ul" (persp-save-state-to-file persp-state-default-file) "save purse")
+      ("uf" (persp-load-state-from-file persp-state-default-file) "load purse")
+      ("u/" (persp-save-state-to-file persp-state-backup-file) "save backup purse")
+      ("u$" (persp-load-state-from-file persp-state-backup-file) "load backup purse"))))
   #+end_src
 *** magit
 #+begin_src emacs-lisp
@@ -518,54 +547,37 @@ Note, that this is guess work."
 #+begin_src emacs-lisp
 (major-mode-hydra-define (minibuffer-inactive-mode)
   (:color amaranth :quit-key ("<f19>") :title "minibuffer")
-  (
-   "text nav"
-   (("t" backward-char "p char")
-    ("s" forward-char  "n char")
-    ("a" backward-word "p word")
-    ("n" forward-word "n word")
-    ("l" move-beginning-of-line "line first")
-    ("c" move-end-of-line "line last"))
-
-   "text action"
-   (("DEL" delete-backward-char "back")
-    ("<" delete-forward-char "delete")
-    ("it" kill-ring-save "copy")
-    ("i SPC" kill-region "cut")
-    ("ia" yank "paste")
-    ("ig" yank-pop "paste pop")
-    ("i DEL" ivy-insert-current "ivy insert")
-    ("il" undo-fu-only-undo "undo")
-    ("id" undo-fu-only-redo "redo"))
-   
+  (   
    "mini nav"
-   (("SPC" ivy-previous-line "p item")
-    ("e" ivy-next-line "n item")
-    ("(" ivy-scroll-up-command "scroll up")
-    (")" ivy-scroll-down-command "scroll down")
-    ("/" ivy-beginning-of-buffer "mini first")
-    ("," ivy-end-of-buffer "mini last")
-    ("." ivy-next-history-element "n hist")
-    ("\"" ivy-previous-history-element "p hist")
+   (("SPC" ivy-previous-line "pree line")
+    ("e" ivy-next-line "nex line")
+    ("(" ivy-scroll-down-command "pree chunk")
+    (")" ivy-scroll-up-command "nex chunk")
+    ("[" ivy-beginning-of-buffer "mini first")
+    ("]" ivy-end-of-buffer "mini last")
+    ("\"" ivy-previous-history-element "pree hist")
+    ("." ivy-next-history-element "nex hist")
     ("y" other-window "switch win")
     ("m" other-frame "switch frame"))
 
    "mini view"
    (("j" ivy-minibuffer-shrink "mini shrink")
     ("k" ivy-minibuffer-grow "mini grow")
-    ("<f13>" (setq hydra-is-helpful t) "show hydra")
-    ("<f24>" (setq hydra-is-helpful nil) "hide hydra"))
+    ("<f16>" (setq hydra-is-helpful t) "show hydra")
+    ("<f22>" (setq hydra-is-helpful nil) "hide hydra"))
 
    "mini action"
    (("o" ivy-mark "mark")
     ("-" ivy-unmark "unmark")
     ("p" minibuffer-keyboard-quit "mini quit")
+    ("C-g" minibuffer-keyboard-quit "mini quit")
     ("RET" ivy-alt-done "mini done/dir")
     ("*" ivy-dispatching-done "mini choice done")
     ("r" ivy-partial-or-done "mini partial")
     ("{" ivy-immediate-done "mini immediate")
     ("g" ivy-call "mini done open ")
-    ("[" ivy-dispatching-call "mini choice done open "))
+    ("[" ivy-dispatching-call "mini choice done open ")
+    ("i DEL" ivy-insert-current "ivy insert"))
 
    "calendar action"
    (("C-t" (org-eval-in-calendar '(calendar-backward-day 1)) "p day")
@@ -612,7 +624,7 @@ Note, that this is guess work."
 #+end_src
 *** text/code
 #+begin_src emacs-lisp
- (major-mode-hydra-define+ (conf-unix-mode conf-windows-mode emacs-lisp-mode fundamental-mode nix-mode text-mode org-mode sh-mode sql-interactive-mode sql-mode sqlplus-mode)
+ (major-mode-hydra-define+ (conf-unix-mode conf-windows-mode emacs-lisp-mode fundamental-mode minibuffer-inactive-mode nix-mode text-mode org-mode sh-mode sql-interactive-mode sql-mode sqlplus-mode)
   (:color amaranth :quit-key ("<f19>") :title "text/code")
   (
    "text nav"
