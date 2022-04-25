@@ -97,8 +97,6 @@ install org-dotemacs package on emacs, then clone this repo to the user-emacs-di
 (use-package persp-mode
   :config
   (setq persp-state-default-file "C:/linux-structure/home/jessenieboer/persp-state"	
-        persp-autokill-buffer-on-remove 'kill
-        persp-nil-hidden t
         persp-nil-name "nil"))
 
 (with-eval-after-load "persp-mode"
@@ -449,6 +447,7 @@ Note, that this is guess work."
       ("!" previous-buffer "pre buffer")
       ("?" next-buffer "nex buffer")
       ("h SPC" counsel-switch-buffer "go buffer")
+      ("h(" switch-to-buffer "go any buffer")
       ("uw" persp-mode "purse mode")
       ("v" persp-prev "pre purse")
       ("x" persp-next "nex purse")
@@ -483,6 +482,7 @@ Note, that this is guess work."
       ("hg" (kill-buffer nil) "delete this buffer")
       ("h[" kill-buffer "delete a buffer")
       ("hd" counsel-M-x "command")
+      ("r" swiper "search")
       ("hf" magit-status "magit")
       ("h RET" counsel-dired "dired")
       ("hr" counsel-find-file "find file")
@@ -501,9 +501,34 @@ Note, that this is guess work."
       ("ut" persp-copy "delete purse")
       ("u RET" persp-rename "rename purse")
       ("ul" (persp-save-state-to-file persp-state-default-file) "save purse")
-      ("uf" (persp-load-state-from-file persp-state-default-file) "load purse")
-      ("u/" (persp-save-state-to-file persp-state-backup-file) "save backup purse")
-      ("u$" (persp-load-state-from-file persp-state-backup-file) "load backup purse"))))
+      ("u/" (persp-load-state-from-file persp-state-default-file) "load purse"))))
+  #+end_src
+*** help
+#+begin_src emacs-lisp
+  (major-mode-hydra-define+ (help-mode)
+  (:color amaranth :quit-key ("<f19>") :title "help-mode")
+  (
+   "help nav"
+   (("SPC" previous-line "pree line")
+    ("e" next-line "nex line")
+    ("t" backward-button "pree link")
+    ("s" forward-button  "nex link")
+    ("a" help-go-back "pree page")
+    ("n" help-go-forward "nex page")
+    ("l" move-beginning-of-line "line first")
+    ("c" move-end-of-line "line last")
+    ("g" scroll-down-command "scroll up")
+    ("p" scroll-up-command "scroll down")
+    ("r" swiper "search")
+    ("(" backward-paragraph "pree chunk")
+    (")" forward-paragraph "nex chunk")
+    ("[" beginning-of-buffer "buff first")
+    ("]" end-of-buffer "buff last"))
+
+   "help action"
+   (("it" kill-ring-save "copy")
+    ("o" set-mark-command "mark")
+    ("-" exchange-point-and-mark "mark switch"))))
   #+end_src
 *** magit
 #+begin_src emacs-lisp
