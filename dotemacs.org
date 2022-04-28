@@ -31,8 +31,8 @@ install org-dotemacs package on emacs, then clone this repo to the user-emacs-di
 #+begin_src emacs-lisp
 (setq default-directory "~/")
 (add-to-list 'load-path "~/.emacs.d/lisp/")
+(add-to-list 'load-path "C:/linux-structure/usr/emacs/emacs-application-framework/")
 #+end_src
-** load path
 ** package sources
 #+begin_src emacs-lisp
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
@@ -97,7 +97,8 @@ install org-dotemacs package on emacs, then clone this repo to the user-emacs-di
 (use-package persp-mode
   :config
   (setq persp-state-default-file "C:/linux-structure/home/jessenieboer/persp-state"	
-        persp-nil-name "nil"))
+        persp-nil-name "nil"
+	    persp-add-buffer-on-after-change-major-mode t))
 
 (with-eval-after-load "persp-mode"
   (with-eval-after-load "ivy"
@@ -387,6 +388,42 @@ Note, that this is guess work."
     ("l" org-agenda-redo-all "refresh")
     ("\\" org-agenda-kill "delete"))))
 #+end_src
+*** browser (eww)
+#+begin_src emacs-lisp
+(major-mode-hydra-define+ (eww-mode eww-buffers-mode)
+  (:color amaranth :quit-key ("<f19>") :title "eww-mode")
+  (
+   "eww nav"
+   (("SPC" previous-line "pree line")
+    ("e" next-line "nex line")
+    ("RET" eww-follow-link "follow link")
+    ("M-RET" eww-open-in-new-buffer "follow link new")
+    ("t" shr-previous-link "pree link")
+    ("s" shr-next-link  "nex link")
+    ("a" eww-back-url "pree page")
+    ("n" eww-forward-url "nex page")
+    ("l" move-beginning-of-line "line first")
+    ("c" move-end-of-line "line last")
+    ("g" scroll-down-command "scroll up")
+    ("p" scroll-up-command "scroll down")
+    ("r" swiper "search")
+    ("(" backward-paragraph "pree chunk")
+    (")" forward-paragraph "nex chunk")
+    ("[" beginning-of-buffer "buff first")
+    ("]" end-of-buffer "buff last"))
+
+   "eww view"
+   (("it" kill-ring-save "copy")
+    ("o" set-mark-command "mark")
+    ("-" exchange-point-and-mark "mark switch")
+    ("iw" eww-browse-with-external-browser "go external"))
+   
+   "eww action"
+   (("it" kill-ring-save "copy")
+    ("o" set-mark-command "mark")
+    ("-" exchange-point-and-mark "mark switch")
+    ("iw" eww-browse-with-external-browser "go external"))))
+    #+end_src
 *** calendar
 #+begin_src emacs-lisp
 (major-mode-hydra-define (calendar-mode)
@@ -437,98 +474,99 @@ Note, that this is guess work."
 #+end_src
 *** emacs
   #+begin_src emacs-lisp
-  (major-mode-hydra-define (calendar-mode conf-unix-mode conf-windows-mode dired-mode emacs-lisp-mode fundamental-mode help-mode lisp-interaction-mode magit-repolist-mode magit-revision-mode magit-log-mode magit-process-mode magit-stash-mode magit-section-mode magit-diff-mode magit-log-select-mode magit-submodule-list-mode magit-refs-mode magit-stashes-mode magit-merge-preview-mode magit-reflog-mode magit-cherry-mode magit-status-mode nix-mode org-mode org-agenda-mode package-menu-mode sh-mode sql-interactive-mode sql-mode sqlplus-mode text-mode)
-(:color amaranth :quit-key ("<f19>") :title "emacs")
-    ("emacs nav"
-     (("|" (other-window -1) "pree win")
-      ("y" (other-window 1)  "nex win")
-      ("&" (other-frame -1) "pree frame")      
-      ("m" other-frame "nex frame")
-      ("!" previous-buffer "pre buffer")
-      ("?" next-buffer "nex buffer")
-      ("h SPC" counsel-switch-buffer "go buffer")
-      ("h(" switch-to-buffer "go any buffer")
-      ("uw" persp-mode "purse mode")
-      ("v" persp-prev "pre purse")
-      ("x" persp-next "nex purse")
-      ("u SPC" persp-switch "go purse")
-      ("ds" avy-goto-char "go char")
-      ("de" avy-goto-line "go line")
-      ("dn" avy-goto-word-1 "go word"))
+    (major-mode-hydra-define (calendar-mode conf-unix-mode conf-windows-mode dired-mode emacs-lisp-mode eww-mode fundamental-mode help-mode lisp-interaction-mode magit-repolist-mode magit-revision-mode magit-log-mode magit-process-mode magit-stash-mode magit-section-mode magit-diff-mode magit-log-select-mode magit-submodule-list-mode magit-refs-mode magit-stashes-mode magit-merge-preview-mode magit-reflog-mode magit-cherry-mode magit-status-mode nix-mode org-mode org-agenda-mode package-menu-mode sh-mode sql-interactive-mode sql-mode sqlplus-mode text-mode)
+  (:color amaranth :quit-key ("<f19>") :title "emacs")
+      ("emacs nav"
+       (("|" (other-window -1) "pree win")
+	("y" (other-window 1)  "nex win")
+	("&" (other-frame -1) "pree frame")      
+	("m" other-frame "nex frame")
+	("!" previous-buffer "pre buffer")
+	("?" next-buffer "nex buffer")
+	("h SPC" counsel-switch-buffer "go buffer")
+	("h(" switch-to-buffer "go any buffer")
+	("C-h SPC" eww-switch-to-buffer "go web buffer")
+	("uw" persp-mode "purse mode")
+	("v" persp-prev "pre purse")
+	("x" persp-next "nex purse")
+	("u SPC" persp-switch "go purse")
+	("ds" avy-goto-char "go char")
+	("de" avy-goto-line "go line")
+	("dn" avy-goto-word-1 "go word"))
 
-     "emacs view"
-     (("fn" split-window-right "make win")
-      ("fh" split-window-below "make win down")
-      ("f;" delete-window "delete win")
-      ("f>" delete-other-windows "delete other win")
-      ("fp" fit-window-to-buffer "fit win")
-      ("f]" balance-windows "balance win")
-      ("fb" maximize-window "max win")
-      ("fc" make-frame-command "make frame")
-      ("f," delete-frame "delete frame")
-      ("f+" toggle-frame-fullscreen "full frame")
-      ("fe" (recenter nil) "recenter")
-      ("fi" (recenter 0) "recenter top")
-      ("fo" (recenter -1) "recenter bot")
-      ("fu" (text-scale-increase 1) "zoom in")
-      ("f:" (text-scale-increase -1) "zoom out")
-      ("<f16>" (setq hydra-is-helpful t) "show hydra")
-      ("<f22>" (setq hydra-is-helpful nil) "hide hydra"))
+       "emacs view"
+       (("fn" split-window-right "make win")
+	("fh" split-window-below "make win down")
+	("f;" delete-window "delete win")
+	("f>" delete-other-windows "delete other win")
+	("fp" fit-window-to-buffer "fit win")
+	("f]" balance-windows "balance win")
+	("fb" maximize-window "max win")
+	("fc" make-frame-command "make frame")
+	("f," delete-frame "delete frame")
+	("f+" toggle-frame-fullscreen "full frame")
+	("fe" (recenter nil) "recenter")
+	("fi" (recenter 0) "recenter top")
+	("fo" (recenter -1) "recenter bot")
+	("fu" (text-scale-increase 1) "zoom in")
+	("f:" (text-scale-increase -1) "zoom out")
+	("<f16>" (setq hydra-is-helpful t) "show hydra")
+	("<f22>" (setq hydra-is-helpful nil) "hide hydra"))
 
-     "emacs action"
-     (("hj" revert-buffer "revert buffer")
-      ("ha" save-buffer "write buffer")
-      ("h=" (save-some-buffers t nil) "write all buffers")
-      ("hg" (kill-buffer nil) "delete this buffer")
-      ("h[" kill-buffer "delete a buffer")
-      ("hd" counsel-M-x "command")
-      ("r" swiper "search")
-      ("hf" magit-status "magit")
-      ("h RET" counsel-dired "dired")
-      ("hr" counsel-find-file "find file")
-      ("hl" eval-last-sexp "eval")
-      ("h$" with-editor-finish "editor finish")
-      ("j" org-capture "capture")
-      ("#" org-capture-goto-last-stored "go last capture")
-      ("@" save-buffers-kill-emacs "kill emacs confirm")
-      ("ug" (persp-kill-buffer (current-buffer)) "delete this buffer")
-      ("u[" persp-kill-buffer "delete a buffer")
-      ("ua" (persp-add-buffer (current-buffer)) "add this buffer")
-      ("u=" persp-add-buffer "add a buffer")
-      ("ud" (persp-remove-buffer (current-buffer)) "remove this buffer")
-      ("u<" persp-remove-buffer "remove a buffer")
-      ("ur" persp-kill "delete purse")
-      ("ut" persp-copy "delete purse")
-      ("u RET" persp-rename "rename purse")
-      ("ul" (persp-save-state-to-file persp-state-default-file) "save purse")
-      ("u/" (persp-load-state-from-file persp-state-default-file) "load purse"))))
+       "emacs action"
+       (("hj" revert-buffer "revert buffer")
+	("ha" save-buffer "write buffer")
+	("h=" (save-some-buffers t nil) "write all buffers")
+	("hg" (kill-buffer nil) "delete this buffer")
+	("h[" kill-buffer "delete a buffer")
+	("hd" counsel-M-x "command")
+	("r" swiper "search")
+	("hf" magit-status "magit")
+	("h RET" counsel-dired "dired")
+	("hr" counsel-find-file "find file")
+	("hl" eval-last-sexp "eval")
+	("h$" with-editor-finish "editor finish")
+	("ht" eww "new eww")	
+	("j" org-capture "capture")
+	("#" org-capture-goto-last-stored "go last capture")
+	("@" save-buffers-kill-emacs "kill emacs confirm")
+	("ua" (persp-add-buffer (current-buffer)) "add this buffer")
+	("u=" persp-add-buffer "add a buffer")
+	("ug" (persp-remove-buffer (current-buffer)) "remove this buffer")
+	("u[" persp-remove-buffer "remove a buffer")
+	("u<" persp-kill "delete purse")
+	("ud" persp-copy "copy purse")
+	("u RET" persp-rename "rename purse")
+	("ul" (persp-save-state-to-file persp-state-default-file) "save purse")
+	("u/" (persp-load-state-from-file persp-state-default-file) "load purse"))))
   #+end_src
 *** help
 #+begin_src emacs-lisp
-  (major-mode-hydra-define+ (help-mode)
-  (:color amaranth :quit-key ("<f19>") :title "help-mode")
-  (
-   "help nav"
-   (("SPC" previous-line "pree line")
-    ("e" next-line "nex line")
-    ("t" backward-button "pree link")
-    ("s" forward-button  "nex link")
-    ("a" help-go-back "pree page")
-    ("n" help-go-forward "nex page")
-    ("l" move-beginning-of-line "line first")
-    ("c" move-end-of-line "line last")
-    ("g" scroll-down-command "scroll up")
-    ("p" scroll-up-command "scroll down")
-    ("r" swiper "search")
-    ("(" backward-paragraph "pree chunk")
-    (")" forward-paragraph "nex chunk")
-    ("[" beginning-of-buffer "buff first")
-    ("]" end-of-buffer "buff last"))
+(major-mode-hydra-define+ (help-mode)
+(:color amaranth :quit-key ("<f19>") :title "help-mode")
+(
+ "help nav"
+ (("SPC" previous-line "pree line")
+  ("e" next-line "nex line")
+  ("RET" help-follow-symbol "go link")
+  ("t" backward-button "pree link")
+  ("s" forward-button  "nex link")
+  ("a" help-go-back "pree page")
+  ("n" help-go-forward "nex page")
+  ("l" move-beginning-of-line "line first")
+  ("c" move-end-of-line "line last")
+  ("g" scroll-down-command "scroll up")
+  ("p" scroll-up-command "scroll down")
+  ("r" swiper "search")
+  ("(" backward-paragraph "pree chunk")
+  (")" forward-paragraph "nex chunk")
+  ("[" beginning-of-buffer "buff first")
+  ("]" end-of-buffer "buff last"))
 
-   "help action"
-   (("it" kill-ring-save "copy")
-    ("o" set-mark-command "mark")
-    ("-" exchange-point-and-mark "mark switch"))))
+ "help action"
+ (("it" kill-ring-save "copy")
+  ("o" set-mark-command "mark")
+  ("-" exchange-point-and-mark "mark switch"))))
   #+end_src
 *** magit
 #+begin_src emacs-lisp
@@ -570,7 +608,7 @@ Note, that this is guess work."
 #+end_src
 *** minibuffer
 #+begin_src emacs-lisp
-(major-mode-hydra-define (minibuffer-inactive-mode)
+(major-mode-hydra-define (minibuffer-inactive-mode minibuffer-mode)
   (:color amaranth :quit-key ("<f19>") :title "minibuffer")
   (   
    "mini nav"
@@ -686,10 +724,20 @@ Note, that this is guess work."
     ("\\" move-text-region-up "region up")
     ("+" move-text-region-down "region down"))))
 #+end_src
+* eaf
+#+begin_src emacs-lisp
+(require 'eaf)
+(require 'eaf-demo)
+;; (require 'eaf-browser)
+;; (require 'eaf-image-viewer)
+;; (require 'eaf-pdf-viewer)
+#+end_src
 * startup
 #+begin_src emacs-lisp
 (set-frame-name "main")
 (toggle-frame-fullscreen)
+(persp-mode)
+(persp-load-state-from-file persp-state-default-file)
 #+end_src
 * other preferences
 #+begin_src emacs-lisp
