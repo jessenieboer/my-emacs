@@ -98,7 +98,8 @@ install org-dotemacs package on emacs, then clone this repo to the user-emacs-di
   :config
   (setq persp-state-default-file "C:/linux-structure/home/jessenieboer/persp-state"	
         persp-nil-name "nil"
-	    persp-add-buffer-on-after-change-major-mode t))
+	    persp-add-buffer-on-after-change-major-mode t
+	    persp-autokill-buffer-on-remove t))
 
 (with-eval-after-load "persp-mode"
   (with-eval-after-load "ivy"
@@ -474,7 +475,7 @@ Note, that this is guess work."
 #+end_src
 *** emacs
   #+begin_src emacs-lisp
-    (major-mode-hydra-define (calendar-mode conf-unix-mode conf-windows-mode dired-mode emacs-lisp-mode eww-mode fundamental-mode help-mode lisp-interaction-mode magit-repolist-mode magit-revision-mode magit-log-mode magit-process-mode magit-stash-mode magit-section-mode magit-diff-mode magit-log-select-mode magit-submodule-list-mode magit-refs-mode magit-stashes-mode magit-merge-preview-mode magit-reflog-mode magit-cherry-mode magit-status-mode nix-mode org-mode org-agenda-mode package-menu-mode sh-mode sql-interactive-mode sql-mode sqlplus-mode text-mode)
+    (major-mode-hydra-define (calendar-mode conf-unix-mode conf-windows-mode dired-mode emacs-lisp-mode eww-mode fundamental-mode help-mode html-vue-mode lisp-interaction-mode magit-repolist-mode magit-revision-mode magit-log-mode magit-process-mode magit-stash-mode magit-section-mode magit-diff-mode magit-log-select-mode magit-submodule-list-mode magit-refs-mode magit-stashes-mode magit-merge-preview-mode magit-reflog-mode magit-cherry-mode magit-status-mode nix-mode org-mode org-agenda-mode package-menu-mode sh-mode sql-interactive-mode sql-mode sqlplus-mode text-mode)
   (:color amaranth :quit-key ("<f19>") :title "emacs")
       ("emacs nav"
        (("|" (other-window -1) "pree win")
@@ -687,7 +688,7 @@ Note, that this is guess work."
 #+end_src
 *** text/code
 #+begin_src emacs-lisp
- (major-mode-hydra-define+ (conf-unix-mode conf-windows-mode emacs-lisp-mode fundamental-mode minibuffer-inactive-mode nix-mode text-mode org-mode sh-mode sql-interactive-mode sql-mode sqlplus-mode)
+ (major-mode-hydra-define+ (conf-unix-mode conf-windows-mode emacs-lisp-mode fundamental-mode html-vue-mode minibuffer-inactive-mode nix-mode text-mode org-mode sh-mode sql-interactive-mode sql-mode sqlplus-mode)
   (:color amaranth :quit-key ("<f19>") :title "text/code")
   (
    "text nav"
@@ -795,3 +796,7 @@ Note, that this is guess work."
 (require 'sqlplus)
 (use-package sql-indent)
 #+end_src
+** vue
+#+begin_src emacs-lisp
+ (use-package vue-html-mode)
+ #+end_src
